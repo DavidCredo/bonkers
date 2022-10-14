@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "572513890000",
+    "project_id": "bonkers-e1eed",
+    "storage_bucket": "bonkers-e1eed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572513890000:android:e4308044411c0d209378d5",
+        "android_client_info": {
+          "package_name": "com.ming.bonkers42"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "572513890000-p4aaf3qd807imhqg5evum3j4k1o2mu91.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIxWK9Td69Jhc5hUAcXH7-S83dV0dYxlU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "572513890000-p4aaf3qd807imhqg5evum3j4k1o2mu91.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
