@@ -1,3 +1,4 @@
+import 'package:bonkers/Screens/camera_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -12,9 +13,12 @@ class HomePage extends StatelessWidget {
         title: Text(title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[],
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const CameraScreen()));
+          },
+          child: const Text('open Camera'),
         ),
       ),
     );

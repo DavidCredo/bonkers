@@ -1,7 +1,12 @@
 import 'package:bonkers/Screens/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 
-void main() {
+late List<CameraDescription> cameras;
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  cameras = await availableCameras();
   runApp(const MyApp());
 }
 
@@ -18,5 +23,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
