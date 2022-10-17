@@ -1,4 +1,5 @@
-import 'package:bonkers/Screens/home_screen.dart';
+import 'package:bonkers/Screens/camera_screen.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -60,14 +61,16 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           // Validate returns true if the form is valid, or false otherwise.
+                          // TODO: Refactor into StreamBuilder for Firebase Authentication. Current approach isn't practical, as authentication state changes aren't considered.
                           if (_loginFormKey.currentState!.validate()) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const HomePage(title: "BONkers")));
+                            await availableCameras().then((cameras) =>
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) =>
+                                            CameraPage(camera: cameras[0]))));
                           }
                         },
                         child: const Text('Login'),
