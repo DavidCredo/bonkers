@@ -77,7 +77,7 @@ class _InputViewState extends State<InputView> {
       //         ),
       //       )
       //     :
-      Icon(
+      const Icon(
         Icons.receipt_long,
         size: 200,
       ),
@@ -104,6 +104,13 @@ class _InputViewState extends State<InputView> {
     ]);
   }
 
+  navigate() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ItemsListPage(itemsString: widget.text!)));
+  }
+
   Future _getImage(ImageSource source) async {
     setState(() {
       _image = null;
@@ -114,7 +121,9 @@ class _InputViewState extends State<InputView> {
     if (pickedFile != null) {
       _processPickedFile(pickedFile);
     }
-    setState(() {});
+    // würde den aktuellen Screen updatend
+    // setState(() {});
+    navigate();
   }
 
   Future _processPickedFile(XFile? pickedFile) async {
