@@ -28,7 +28,7 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
   @override
   Widget build(BuildContext context) {
     return CameraView(
-      title: 'Text Detector',
+      title: 'BONkers',
       customPaint: _customPaint,
       text: _text,
       onImage: (inputImage) {
