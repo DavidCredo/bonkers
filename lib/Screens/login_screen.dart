@@ -1,4 +1,4 @@
-import 'package:bonkers/Screens/camera_screen.dart';
+import 'package:bonkers/Screens/text_recognizer_view.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
@@ -65,12 +65,13 @@ class _LoginPageState extends State<LoginPage> {
                           // Validate returns true if the form is valid, or false otherwise.
                           // TODO: Refactor into StreamBuilder for Firebase Authentication. Current approach isn't practical, as authentication state changes aren't considered.
                           if (_loginFormKey.currentState!.validate()) {
-                            await availableCameras().then((cameras) =>
-                                Navigator.push(
+                            await availableCameras()
+                                .then((cameras) => Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (_) =>
-                                            CameraPage(camera: cameras[0]))));
+                                            // CameraPage(camera: cameras[0])
+                                            const TextRecognizerView())));
                           }
                         },
                         child: const Text('Login'),

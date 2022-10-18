@@ -15,8 +15,8 @@ class HomePage extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const CameraScreen()));
+            // Navigator.push(context,
+            //     MaterialPageRoute(builder: (context) => ));
           },
           child: const Text('open Camera'),
         ),
