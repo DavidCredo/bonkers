@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:image_picker/image_picker.dart';
-import 'scanned_item_listview.dart';
 
 class InputView extends StatefulWidget {
   const InputView(
@@ -104,13 +103,6 @@ class _InputViewState extends State<InputView> {
     ]);
   }
 
-  navigate() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ItemsListPage(itemsString: widget.text!)));
-  }
-
   Future _getImage(ImageSource source) async {
     setState(() {
       _image = null;
@@ -121,9 +113,7 @@ class _InputViewState extends State<InputView> {
     if (pickedFile != null) {
       _processPickedFile(pickedFile);
     }
-    // würde den aktuellen Screen updatend
-    // setState(() {});
-    navigate();
+    setState(() {});
   }
 
   Future _processPickedFile(XFile? pickedFile) async {

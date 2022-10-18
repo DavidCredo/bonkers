@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ItemsListPage extends StatefulWidget {
-  final String itemsString;
+  final String? itemsString;
   const ItemsListPage({super.key, required this.itemsString});
 
   @override
@@ -9,29 +9,28 @@ class ItemsListPage extends StatefulWidget {
 }
 
 class _ItemsListPageState extends State<ItemsListPage> {
+  List<String>? dataset;
+
   @override
   void initState() {
-    // TODO: implement initState
+    dataset = widget.itemsString!.split(' ');
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scanned Items'),
-      ),
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-          return _listItem(index);
-        },
-      ),
-    );
-  }
-
-  Widget _listItem(int index) {
-    return Card(
-      child: ListTile(title: Text("Item")),
-    );
+        appBar: AppBar(
+          title: const Text('Scanned Items'),
+        ),
+        body: ListView(
+          children: dataset!.map((word) {
+            return Container(
+              margin: EdgeInsets.all(5),
+              padding: EdgeInsets.all(15),
+              child: Text(word),
+            );
+          }).toList(),
+        ));
   }
 }
