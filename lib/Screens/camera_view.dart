@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:image_picker/image_picker.dart';
+import 'scanned_item_listview.dart';
 
 class InputView extends StatefulWidget {
   const InputView(
@@ -26,12 +27,10 @@ class _InputViewState extends State<InputView> {
   File? _image;
   String? _path;
   ImagePicker? _imagePicker;
-  double zoomLevel = 0.0, minZoomLevel = 0.0, maxZoomLevel = 0.0;
 
   @override
   void initState() {
     super.initState();
-
     _imagePicker = ImagePicker();
   }
 
@@ -64,22 +63,24 @@ class _InputViewState extends State<InputView> {
 
   Widget _galleryBody() {
     return ListView(shrinkWrap: true, children: [
-      _image != null
-          ? SizedBox(
-              height: 400,
-              width: 400,
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  Image.file(_image!),
-                  if (widget.customPaint != null) widget.customPaint!,
-                ],
-              ),
-            )
-          : Icon(
-              Icons.image,
-              size: 200,
-            ),
+      // Hier wird das Bild angezeigt, wenn eines ausgewählt wurde
+      // _image != null
+      //     ? SizedBox(
+      //         height: 400,
+      //         width: 400,
+      //         child: Stack(
+      //           fit: StackFit.expand,
+      //           children: <Widget>[
+      //             Image.file(_image!),
+      //             if (widget.customPaint != null) widget.customPaint!,
+      //           ],
+      //         ),
+      //       )
+      //     :
+      Icon(
+        Icons.receipt_long,
+        size: 200,
+      ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: ElevatedButton(
@@ -94,11 +95,12 @@ class _InputViewState extends State<InputView> {
           onPressed: () => _getImage(ImageSource.camera),
         ),
       ),
-      if (_image != null)
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(widget.text ?? ''),
-        ),
+      // Sobald ein Bild gemacht wurde, kommt hier das Ergebnis der Texterkennung (soll später wieder an dieser Stelle angezeigt werden)
+      // if (_image != null)
+      // Padding(
+      //   padding: const EdgeInsets.all(16.0),
+      //   child: Text(widget.text ?? ''),
+      // ),
     ]);
   }
 
