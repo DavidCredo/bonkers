@@ -107,7 +107,8 @@ class _CameraViewState extends State<CameraView> {
       _image = null;
       _path = null;
     });
-    final pickedFile = await _imagePicker?.pickImage(source: source);
+    final pickedFile = await _imagePicker?.pickImage(
+        source: source, requestFullMetadata: false);
     if (pickedFile != null) {
       _processPickedFile(pickedFile);
     }
