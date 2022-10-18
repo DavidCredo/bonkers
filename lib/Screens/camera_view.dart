@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,15 +10,13 @@ class CameraView extends StatefulWidget {
       required this.title,
       required this.customPaint,
       this.text,
-      required this.onImage,
-      this.initialDirection = CameraLensDirection.back})
+      required this.onImage})
       : super(key: key);
 
   final String title;
   final CustomPaint? customPaint;
   final String? text;
   final Function(InputImage inputImage) onImage;
-  final CameraLensDirection initialDirection;
 
   @override
   _CameraViewState createState() => _CameraViewState();

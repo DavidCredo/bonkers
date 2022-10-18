@@ -1,5 +1,4 @@
 import 'package:bonkers/Screens/text_recognizer_view.dart';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -61,17 +60,14 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: ElevatedButton(
-                        onPressed: () async {
+                        onPressed: () {
                           // Validate returns true if the form is valid, or false otherwise.
-                          // TODO: Refactor into StreamBuilder for Firebase Authentication. Current approach isn't practical, as authentication state changes aren't considered.
                           if (_loginFormKey.currentState!.validate()) {
-                            await availableCameras()
-                                .then((cameras) => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) =>
-                                            // CameraPage(camera: cameras[0])
-                                            const TextRecognizerView())));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const TextRecognizerView()));
                           }
                         },
                         child: const Text('Login'),

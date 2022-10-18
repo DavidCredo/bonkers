@@ -53,8 +53,5 @@
 	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>The core functionallity of this app relies on the access to your camera (to scan receipts).</string>
-	<!-- TODO: remove mic promt -->
-	<key>NSMicrophoneUsageDescription</key>
-	<string>We dont use your mic, better dont grant access</string>
 </dict>
 </plist>
