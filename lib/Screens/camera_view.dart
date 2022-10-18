@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:image_picker/image_picker.dart';
 
-class CameraView extends StatefulWidget {
-  const CameraView(
+class InputView extends StatefulWidget {
+  const InputView(
       {Key? key,
       required this.title,
       required this.customPaint,
@@ -19,10 +19,10 @@ class CameraView extends StatefulWidget {
   final Function(InputImage inputImage) onImage;
 
   @override
-  _CameraViewState createState() => _CameraViewState();
+  _InputViewState createState() => _InputViewState();
 }
 
-class _CameraViewState extends State<CameraView> {
+class _InputViewState extends State<InputView> {
   File? _image;
   String? _path;
   ImagePicker? _imagePicker;
