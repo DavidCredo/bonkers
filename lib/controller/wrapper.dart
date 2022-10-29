@@ -1,5 +1,5 @@
 import 'package:bonkers/controller/auth_handler.dart';
-import 'package:bonkers/views/home_view.dart';
+import 'package:bonkers/views/home.dart';
 import 'package:bonkers/controller/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

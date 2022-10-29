@@ -1,8 +1,8 @@
-import 'package:bonkers/views/login_view.dart';
+import 'package:bonkers/views/login.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-import '../views/register_view.dart';
+import '../views/register.dart';
 
 class Handler extends StatefulWidget {
   const Handler({super.key});
