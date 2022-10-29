@@ -29,6 +29,13 @@
             {
               "client_id": "572513890000-p4aaf3qd807imhqg5evum3j4k1o2mu91.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "572513890000-25su427t9kb2d67lvhlrc85496nsnmh6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ming.bonkers42"
+              }
             }
           ]
         }
