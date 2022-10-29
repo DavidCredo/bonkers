@@ -57,7 +57,8 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('BONkers'),
+          title: Wrap(
+              children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
         ),
         body: Stack(children: <Widget>[
           ListView(
