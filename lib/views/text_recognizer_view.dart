@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import 'scanned_item_listview.dart';
 import 'camera_view.dart';
 import 'Painters/text_detector_painter.dart';
 
@@ -37,13 +36,6 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
     );
   }
 
-  // navigate(result) {
-  //   Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //           builder: (context) => ItemsListPage(itemsString: result)));
-  // }
-
   Future<void> processImage(InputImage inputImage) async {
     if (!_canProcess) return;
     if (_isBusy) return;
@@ -61,8 +53,6 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
       _customPaint = CustomPaint(painter: painter);
     } else {
       _text = recognizedText.text;
-      // navigate() ist nur für den Milestone 1, bitte wieder entfernen
-      // navigate(_text);
       // TODO: set _customPaint to draw boundingRect on top of image
       _customPaint = null;
     }
