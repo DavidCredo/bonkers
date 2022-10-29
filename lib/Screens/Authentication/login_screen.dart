@@ -1,17 +1,21 @@
-import 'package:bonkers/Screens/home_view.dart';
+import 'package:bonkers/services/auth.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+import '../../models/loginuser.dart';
+
+class Login extends StatefulWidget {
+  final Function? toggleView;
+  const Login({super.key, this.toggleView});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<Login> createState() => _LoginState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginState extends State<Login> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _loginFormKey = GlobalKey<FormState>();
+  final AuthService _auth = AuthService();
 
   @override
   void dispose() {
@@ -42,7 +46,9 @@ class _LoginPageState extends State<LoginPage> {
                         return null;
                       },
                       decoration: const InputDecoration(
-                          hintText: "Email", prefixIcon: Icon(Icons.email)),
+                          border: OutlineInputBorder(),
+                          hintText: "Email",
+                          prefixIcon: Icon(Icons.email)),
                     ),
                     const SizedBox(height: 15),
                     TextFormField(
@@ -54,24 +60,39 @@ class _LoginPageState extends State<LoginPage> {
                           return null;
                         },
                         decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
                             hintText: "Password",
                             prefixIcon: Icon(Icons.password)),
                         obscureText: true),
                     Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           // Validate returns true if the form is valid, or false otherwise.
                           if (_loginFormKey.currentState!.validate()) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const HomeView()));
+                            dynamic result = await _auth.signInEmailPassword(
+                                LoginUser(
+                                    email: _emailController.text,
+                                    password: _passwordController.text));
+                            if (result.uid == null) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      content: Text(result.code),
+                                    );
+                                  });
+                            }
                           }
                         },
                         child: const Text('Login'),
                       ),
                     ),
+                    TextButton(
+                        onPressed: () {
+                          widget.toggleView!();
+                        },
+                        child: const Text("No account yet?"))
                   ],
                 ))));
   }
