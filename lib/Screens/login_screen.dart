@@ -1,4 +1,4 @@
-import 'package:bonkers/Screens/text_recognizer_view.dart';
+import 'package:bonkers/Screens/home_view.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -66,8 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const TextRecognizerView()));
+                                    builder: (context) => const HomeView()));
                           }
                         },
                         child: const Text('Login'),

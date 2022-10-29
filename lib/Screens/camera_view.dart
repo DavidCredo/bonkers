@@ -38,23 +38,6 @@ class _InputViewState extends State<InputView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        // Kann man umbauen, sodass man zu einer anderen Seite kommt
-        // actions: [
-        //   if (_allowPicker)
-        //     Padding(
-        //       padding: EdgeInsets.only(right: 20.0),
-        //       child: GestureDetector(
-        //         onTap: _switchScreenMode,
-        //         child: Icon(
-        //           _mode == ScreenMode.liveFeed
-        //               ? Icons.photo_library_outlined
-        //               : (Platform.isIOS
-        //                   ? Icons.camera_alt_outlined
-        //                   : Icons.camera),
-        //         ),
-        //       ),
-        //     ),
-        // ],
       ),
       body: _galleryBody(),
     );
@@ -94,12 +77,11 @@ class _InputViewState extends State<InputView> {
           onPressed: () => _getImage(ImageSource.camera),
         ),
       ),
-      // Sobald ein Bild gemacht wurde, kommt hier das Ergebnis der Texterkennung (soll später wieder an dieser Stelle angezeigt werden)
-      // if (_image != null)
-      // Padding(
-      //   padding: const EdgeInsets.all(16.0),
-      //   child: Text(widget.text ?? ''),
-      // ),
+      if (_image != null)
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(widget.text ?? ''),
+        ),
     ]);
   }
 
