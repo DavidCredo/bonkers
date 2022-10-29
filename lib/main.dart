@@ -1,8 +1,8 @@
-import 'package:bonkers/views/wrapper.dart';
+import 'package:bonkers/controller/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'firebase_options.dart';
+import 'controller/firebase_options.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();

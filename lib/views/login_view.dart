@@ -1,7 +1,7 @@
-import 'package:bonkers/services/auth.dart';
+import 'package:bonkers/controller/auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../models/loginuser.dart';
+import '../models/loginuser.dart';
 
 class Login extends StatefulWidget {
   final Function? toggleView;

@@ -1,5 +1,5 @@
 import 'package:bonkers/models/loginuser.dart';
-import 'package:bonkers/services/auth.dart';
+import 'package:bonkers/controller/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';

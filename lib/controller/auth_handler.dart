@@ -1,8 +1,8 @@
-import 'package:bonkers/views/Authentication/login_screen.dart';
+import 'package:bonkers/views/login_view.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-import 'register_screen.dart';
+import '../views/register_view.dart';
 
 class Handler extends StatefulWidget {
   const Handler({super.key});
