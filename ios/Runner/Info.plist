@@ -6,10 +6,6 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This app needs access to camera when used</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app needs access to microphone when used</string>
 	<key>CFBundleDisplayName</key>
 	<string>Bonkers</string>
 	<key>CFBundleExecutable</key>
@@ -30,6 +26,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>The core functionallity of this app relies on the access to your camera (to scan receipts).</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to microphone when used</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -51,7 +51,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSCameraUsageDescription</key>
-	<string>The core functionallity of this app relies on the access to your camera (to scan receipts).</string>
 </dict>
 </plist>
