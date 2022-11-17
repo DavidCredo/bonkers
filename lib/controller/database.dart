@@ -32,7 +32,8 @@ class DatabaseService {
 
   void getUser(LoggedInUser user, FirebaseUser authenticatedUser) async {
     await db.doc(authenticatedUser.uid).get().then((DocumentSnapshot doc) {
-      //WIP
+      final userAsJson = doc.data() as Map<String, dynamic>; 
+      return LoggedInUser.fromJson(userAsJson);
     });
   }
 }
