@@ -1,3 +1,4 @@
+import 'package:bonkers/controller/database.dart';
 import 'package:bonkers/models/loginuser.dart';
 import 'package:bonkers/controller/auth.dart';
 import 'package:bonkers/models/user.dart';
@@ -15,6 +16,7 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  final db = DatabaseService();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
@@ -97,9 +99,7 @@ class _RegisterState extends State<Register> {
                             email: _emailController.text,
                             firstName: _nameController.text);
 
-                        await FirebaseFirestore.instance
-                            .collection("users")
-                            .add(user.toJson());
+                        db.addUser(user, result);
                         if (result.uid == null) {
                           showDialog(
                               context: context,
