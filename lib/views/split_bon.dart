@@ -21,6 +21,8 @@ class _SplitBonState extends State<SplitBon> {
   CustomPaint? _customPaint;
   String? _text;
   File? _image;
+  double? _width;
+  double? _height;
 
   @override
   void initState() {
@@ -42,21 +44,23 @@ class _SplitBonState extends State<SplitBon> {
           title: Wrap(
               children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
         ),
-        body: ListView(shrinkWrap: true, children: [
-          SizedBox(
-            height: 400,
-            width: 400,
+        body: SizedBox(
+            height: _width != null && _height != null
+                ? (MediaQuery.of(context).size.width / _width! * _height!)
+                : MediaQuery.of(context).size.height,
+            width: _width != null && _height != null
+                ? (MediaQuery.of(context).size.height / _height! * _width!)
+                : MediaQuery.of(context).size.width,
             child: Stack(
               fit: StackFit.expand,
               children: <Widget>[
                 Image.file(_image!),
                 if (_customPaint != null) _customPaint!,
+                if (_text == '' || _text == null)
+                  const Text(
+                      'Leider konnte auf deinem Bild kein Text erkannt werden.') // TODO: schöneres Feedback und Möglichkeit direkt ein neues Bild aufzunehmen / zu wählen.,
               ],
-            ),
-          ),
-          Text(_text ??
-              'Leider konnte auf deinem Bild kein Text erkannt werden.')
-        ]));
+            )));
   }
 
   Future _processPickedFile(XFile? pickedFile) async {
@@ -71,31 +75,37 @@ class _SplitBonState extends State<SplitBon> {
     final Uint8List bytes = await pickedFile!.readAsBytes();
     final decodedImage = await decodeImageFromList(bytes);
     final exifData = await readExifFromBytes(bytes);
+    final imageWidth = decodedImage.width.toDouble();
+    final imageHeight = decodedImage.height.toDouble();
 
     getImageRotation() {
-      var width = exifData['EXIF ExifImageWidth'];
-      var height = exifData['EXIF ExifImageLength'];
-      print(exifData);
+      print({exifData['Image Orientation'], imageWidth, imageHeight});
+      // Exif data (pre smartphone standard) is based on horizontal (0 deg) images (most digicam pictures), the code is based vertically (0 deg, most smartphone pictures)
+      final orientation = exifData['Image Orientation']!.printable;
 
-      switch (exifData['Image Orientation']!.printable) {
-        case "Horizontal (normal)":
-          return InputImageRotation.rotation0deg;
-        case "Rotated 180":
-          return InputImageRotation.rotation180deg;
-        case "Rotated 90° CCW":
-          return InputImageRotation.rotation270deg;
-        case "Rotated 90 CW":
-          return InputImageRotation.rotation90deg;
-        default:
-          return InputImageRotation
-              .rotation0deg; // if in doubt, the function still needs this information. in most cases its 0 degrees
-      }
+      if (orientation == "Horizontal (normal)" && imageHeight < imageWidth) {
+        print("1");
+        return InputImageRotation.rotation90deg;
+      } else if (orientation == "Rotated 180" && imageHeight < imageWidth) {
+        print("2");
+        return InputImageRotation.rotation270deg;
+      } else if (orientation == "Rotated 90 CCW" && imageHeight > imageWidth) {
+        print("3");
+        return InputImageRotation.rotation180deg;
+      } else if (orientation == "Rotated 90 CW" && imageHeight > imageWidth) {
+        print("4");
+        return InputImageRotation.rotation0deg;
+      } else {
+        print("5");
+        return InputImageRotation.rotation0deg;
+      } // if in doubt, the function still needs this information. In most cases its 0 degrees
     }
 
     final inputImage = InputImage.fromFilePath(path);
-    final imageSize =
-        Size(decodedImage.height.toDouble(), decodedImage.width.toDouble());
+    final imageSize = Size(imageWidth, imageHeight);
     final rotation = getImageRotation();
+    _width = imageWidth;
+    _height = imageHeight;
 
     processImage(inputImage, imageSize, rotation);
   }
@@ -105,13 +115,11 @@ class _SplitBonState extends State<SplitBon> {
     if (!_canProcess) return;
     if (_isBusy) return;
     _isBusy = true;
-    setState(() {
-      _text = '';
-    });
     final recognizedText = await _textRecognizer.processImage(inputImage);
     final painter =
         TextRecognizerPainter(recognizedText, imageSize, imageRotation);
     _customPaint = CustomPaint(painter: painter);
+    _text = recognizedText.text;
     _isBusy = false;
     if (mounted) {
       setState(() {});

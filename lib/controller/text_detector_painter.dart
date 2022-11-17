@@ -18,20 +18,21 @@ class TextRecognizerPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0
-      ..color = Colors.lightGreenAccent;
+      ..strokeWidth = 1.0
+      ..color = Color.fromARGB(255, 89, 175, 255);
 
-    final Paint background = Paint()..color = Color(0x99000000);
+    final Paint background = Paint()
+      ..color = Color.fromARGB(187, 255, 253, 253);
 
     for (final textBlock in recognizedText.blocks) {
       final ParagraphBuilder builder = ParagraphBuilder(
         ParagraphStyle(
             textAlign: TextAlign.left,
-            fontSize: 16,
+            fontSize: 10, // TODO: automate
             textDirection: TextDirection.ltr),
       );
-      builder.pushStyle(
-          ui.TextStyle(color: Colors.lightGreenAccent, background: background));
+      builder.pushStyle(ui.TextStyle(
+          color: Color.fromARGB(255, 0, 0, 0), background: background));
       builder.addText(textBlock.text);
       builder.pop();
 
