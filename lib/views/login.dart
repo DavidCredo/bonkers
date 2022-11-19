@@ -1,7 +1,7 @@
 import 'package:bonkers/controller/auth.dart';
 import 'package:flutter/material.dart';
 
-import '../models/loginuser.dart';
+
 
 class Login extends StatefulWidget {
   final Function? toggleView;
@@ -71,9 +71,8 @@ class _LoginState extends State<Login> {
                           // Validate returns true if the form is valid, or false otherwise.
                           if (_loginFormKey.currentState!.validate()) {
                             dynamic result = await _auth.signInEmailPassword(
-                                LoginUser(
-                                    email: _emailController.text,
-                                    password: _passwordController.text));
+                                _emailController.text,
+                                _passwordController.text);
                             if (result.uid == null) {
                               showDialog(
                                   context: context,

@@ -1,5 +1,4 @@
 import 'package:bonkers/controller/database.dart';
-import 'package:bonkers/models/loginuser.dart';
 import 'package:bonkers/controller/auth.dart';
 import 'package:bonkers/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -91,9 +90,7 @@ class _RegisterState extends State<Register> {
                     onPressed: () async {
                       if (_registerFormKey.currentState!.validate()) {
                         dynamic result = await _auth.registerEmailPassword(
-                            LoginUser(
-                                email: _emailController.text,
-                                password: _passwordController.text));
+                            _emailController.text, _passwordController.text);
 
                         LoggedInUser user = LoggedInUser(
                             email: _emailController.text,
