@@ -92,7 +92,7 @@ class _RegisterState extends State<Register> {
                         dynamic result = await _auth.registerEmailPassword(
                             _emailController.text, _passwordController.text);
 
-                        LoggedInUser user = LoggedInUser(
+                        AuthenticatedUser user = AuthenticatedUser(
                             email: _emailController.text,
                             firstName: _nameController.text);
 

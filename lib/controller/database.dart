@@ -21,7 +21,7 @@ final userCollectionProvider = StreamProvider.autoDispose<Map?>((ref) {
 class DatabaseService {
   final db = FirebaseFirestore.instance.collection('users');
 
-  void addUser(LoggedInUser user, FirebaseUser authenticatedUser) async {
+  void addUser(AuthenticatedUser user, FirebaseUser authenticatedUser) async {
     await FirebaseFirestore.instance
         .collection("users")
         .doc(authenticatedUser.uid)
@@ -30,10 +30,10 @@ class DatabaseService {
     print("New user added: $userName");
   }
 
-  void getUser(LoggedInUser user, FirebaseUser authenticatedUser) async {
+  void getUser(AuthenticatedUser user, FirebaseUser authenticatedUser) async {
     await db.doc(authenticatedUser.uid).get().then((DocumentSnapshot doc) {
       final userAsJson = doc.data() as Map<String, dynamic>; 
-      return LoggedInUser.fromJson(userAsJson);
+      return AuthenticatedUser.fromJson(userAsJson);
     });
   }
 }
