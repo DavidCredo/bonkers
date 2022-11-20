@@ -10,9 +10,9 @@ class Bon {
   final List<Article> articles;
 
   factory Bon.fromJson(Map<String, dynamic> data) {
-    final title = data["title"] as String;
-    final createdAt = data["createdAt"] as Timestamp;
-    final articlesData = data["articles"] as List<dynamic>;
+    final title = data['title'] as String;
+    final createdAt = data['createdAt'] as Timestamp;
+    final articlesData = data['articles'] as List<dynamic>;
     final articles = articlesData
         .map((articleData) => Article.fromJson(articleData))
         .toList();
@@ -22,9 +22,9 @@ class Bon {
 
   Map<String, dynamic> toJson() {
     return {
-      "title": title,
-      "createdAt": createdAt,
-      "articles": articles.map((article) => article.toJson()).toList(),
+      'title': title,
+      'createdAt': createdAt,
+      'articles': articles.map((article) => article.toJson()).toList(),
     };
   }
 }
