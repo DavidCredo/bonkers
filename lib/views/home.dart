@@ -1,6 +1,9 @@
+import 'package:bonkers/models/bon_list.dart';
+import 'package:bonkers/views/helpers/bon_list_widget.dart';
 import 'package:bonkers/views/split_bon.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../models/bon.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -46,15 +49,7 @@ class _HomeViewState extends State<HomeView> {
               children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
         ),
         body: Stack(children: <Widget>[
-          ListView(
-            children: dataset!.map((e) {
-              return Container(
-                margin: const EdgeInsets.all(5),
-                padding: const EdgeInsets.all(15),
-                child: Text(e),
-              );
-            }).toList(),
-          ),
+          const BonListWidget(),
           Stack(fit: StackFit.expand, children: [
             Positioned(
                 left: 40,
