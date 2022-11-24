@@ -1,23 +1,28 @@
-import 'package:bonkers/models/article.dart';
+import 'package:bonkers/models/bon_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Bon {
-  Bon({required this.title, required this.createdAt, required this.articles});
-
+  Bon(
+      {required this.title,
+      required this.createdAt,
+      required this.articles,
+      required this.uid});
+  final String uid;
   final String title;
   final Timestamp createdAt;
-  final List<Article> articles;
+  final List<BonItem> articles;
 
   factory Bon.fromJson(Map<String, dynamic> data) {
     final title = data['title'] as String;
     final createdAt = data['createdAt'] as Timestamp;
     final articlesData = data['articles'] as List<dynamic>;
     final articles = articlesData
-        .map((articleData) => Article.fromJson(articleData))
+        .map((articleData) => BonItem.fromJson(articleData))
         .toList();
-
-    return Bon(articles: articles, createdAt: createdAt, title: title);
+    final uid = data['uid'] as String;
+    return Bon(
+        articles: articles, createdAt: createdAt, title: title, uid: uid);
   }
 
   Map<String, dynamic> toJson() {
@@ -25,6 +30,7 @@ class Bon {
       'title': title,
       'createdAt': createdAt,
       'articles': articles.map((article) => article.toJson()).toList(),
+      'uid': uid,
     };
   }
 }
