@@ -1,16 +1,16 @@
-class Article {
-  Article({required this.price, required this.title, this.payer});
+class BonItem {
+  BonItem({required this.price, required this.title, this.payer});
 
   final double price;
   final String title;
   final String? payer;
 
-  factory Article.fromJson(Map<String, dynamic> data) {
+  factory BonItem.fromJson(Map<String, dynamic> data) {
     final price = data["price"] as double;
     final title = data["title"] as String;
     final payer = data["payer"] as String?;
 
-    return Article(price: price, title: title, payer: payer);
+    return BonItem(price: price, title: title, payer: payer);
   }
 
   Map<String, dynamic> toJson() {

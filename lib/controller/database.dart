@@ -1,11 +1,13 @@
 import 'package:bonkers/controller/auth.dart';
 import 'package:bonkers/models/bon.dart';
-import 'package:bonkers/models/bon_list.dart';
 import 'package:bonkers/models/firebaseuser.dart';
 import 'package:bonkers/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
+
+var uuid = const Uuid();
 
 final userCollectionProvider = StreamProvider.autoDispose((ref) {
   final userStream = ref.watch(authStateChangesProvider);
@@ -19,7 +21,7 @@ final userCollectionProvider = StreamProvider.autoDispose((ref) {
     return const Stream.empty();
   }
 });
-
+// TODO: Refactoring needed? Type safety is ok, but there's probably a better way.
 final userBonsCollectionProvider = StreamProvider.autoDispose<List<Bon>>((ref) {
   final userStream = ref.watch(authStateChangesProvider);
 

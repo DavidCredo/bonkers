@@ -1,4 +1,3 @@
-import 'package:bonkers/models/bon_list.dart';
 import 'package:bonkers/views/helpers/bon_list_widget.dart';
 import 'package:bonkers/views/split_bon.dart';
 import 'package:flutter/material.dart';
