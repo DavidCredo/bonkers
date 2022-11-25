@@ -5,19 +5,31 @@ import 'package:flutter/src/widgets/framework.dart';
 import '../models/bon_item.dart';
 
 class BonDetailView extends StatefulWidget {
-  const BonDetailView({super.key});
+  final List<BonItem> items;
+  const BonDetailView({super.key, required this.items});
 
   @override
   State<BonDetailView> createState() => _BonDetailViewState();
 }
 
 class _BonDetailViewState extends State<BonDetailView> {
-
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemBuilder: ((context, index) => const Padding(
-              padding: EdgeInsets.all(8.0),
-            )));
+    final List<BonItem> items = widget.items;
+    return Scaffold(
+      appBar: AppBar(title: const Text("Artikel")),
+      body: Stack(
+        children: <Widget>[
+          ListView.builder(
+              itemCount: items.length,
+              itemBuilder: ((context, index) => ListTile(
+                    title: Text(items[index].title),
+                    subtitle:
+                        Text("Preis: " + items[index].price.toString() + "€"),
+                  ))),
+          
+        ],
+      ),
+    );
   }
 }
