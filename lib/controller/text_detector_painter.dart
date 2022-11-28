@@ -1,28 +1,30 @@
 import 'dart:ui';
 import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-
 import 'coordinates_translator.dart';
+import 'package:touchable/touchable.dart';
 
 class TextRecognizerPainter extends CustomPainter {
   TextRecognizerPainter(
-      this.recognizedText, this.absoluteImageSize, this.rotation);
+      this.recognizedText, this.absoluteImageSize, this.rotation, this.context);
 
   final RecognizedText recognizedText;
   final Size absoluteImageSize;
   final InputImageRotation rotation;
+  final BuildContext context; // context from CanvasTouchDetector
 
   @override
   void paint(Canvas canvas, Size size) {
+    var touchyCanvas = TouchyCanvas(context, canvas);
+
     final Paint paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
-      ..color = Color.fromARGB(255, 89, 175, 255);
+      ..color = const Color.fromARGB(255, 89, 175, 255);
 
     final Paint background = Paint()
-      ..color = Color.fromARGB(187, 255, 253, 253);
+      ..color = const Color.fromARGB(187, 255, 253, 253);
 
     for (final textBlock in recognizedText.blocks) {
       final ParagraphBuilder builder = ParagraphBuilder(
@@ -32,7 +34,7 @@ class TextRecognizerPainter extends CustomPainter {
             textDirection: TextDirection.ltr),
       );
       builder.pushStyle(ui.TextStyle(
-          color: Color.fromARGB(255, 0, 0, 0), background: background));
+          color: const Color.fromARGB(255, 0, 0, 0), background: background));
       builder.addText(textBlock.text);
       builder.pop();
 
@@ -45,10 +47,12 @@ class TextRecognizerPainter extends CustomPainter {
       final bottom = translateY(
           textBlock.boundingBox.bottom, rotation, size, absoluteImageSize);
 
-      canvas.drawRect(
-        Rect.fromLTRB(left, top, right, bottom),
-        paint,
-      );
+      touchyCanvas.drawRect(Rect.fromLTRB(left, top, right, bottom), paint,
+          onTapDown: (tapDetail) {
+        print(textBlock.text);
+      }, onLongPressStart: (tapDetail) {
+        print("longpress");
+      });
 
       canvas.drawParagraph(
         builder.build()
@@ -62,6 +66,6 @@ class TextRecognizerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(TextRecognizerPainter oldDelegate) {
-    return oldDelegate.recognizedText != recognizedText;
+    return false;
   }
 }
