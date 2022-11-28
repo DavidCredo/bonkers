@@ -19,9 +19,9 @@ class TextRecognizerPainter extends CustomPainter {
     var touchyCanvas = TouchyCanvas(context, canvas);
 
     final Paint paint = Paint()
-      ..style = PaintingStyle.stroke
+      ..style = PaintingStyle.fill
       ..strokeWidth = 1.0
-      ..color = const Color.fromARGB(255, 89, 175, 255);
+      ..color = Color.fromARGB(50, 89, 255, 100);
 
     final Paint background = Paint()
       ..color = const Color.fromARGB(187, 255, 253, 253);
