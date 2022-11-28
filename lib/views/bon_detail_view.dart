@@ -1,3 +1,4 @@
+import 'package:bonkers/views/helpers/bon_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -27,7 +28,6 @@ class _BonDetailViewState extends State<BonDetailView> {
                     subtitle:
                         Text("Preis: " + items[index].price.toString() + "€"),
                   ))),
-          
         ],
       ),
     );
