@@ -20,24 +20,12 @@ class TextRecognizerPainter extends CustomPainter {
 
     final Paint paint = Paint()
       ..style = PaintingStyle.fill
-      ..strokeWidth = 1.0
-      ..color = Color.fromARGB(50, 89, 255, 100);
+      ..color = const Color.fromARGB(50, 89, 255, 100);
 
     final Paint background = Paint()
       ..color = const Color.fromARGB(187, 255, 253, 253);
 
     for (final textBlock in recognizedText.blocks) {
-      final ParagraphBuilder builder = ParagraphBuilder(
-        ParagraphStyle(
-            textAlign: TextAlign.left,
-            fontSize: 10, // TODO: automate
-            textDirection: TextDirection.ltr),
-      );
-      builder.pushStyle(ui.TextStyle(
-          color: const Color.fromARGB(255, 0, 0, 0), background: background));
-      builder.addText(textBlock.text);
-      builder.pop();
-
       final left = translateX(
           textBlock.boundingBox.left, rotation, size, absoluteImageSize);
       final top = translateY(
@@ -46,6 +34,58 @@ class TextRecognizerPainter extends CustomPainter {
           textBlock.boundingBox.right, rotation, size, absoluteImageSize);
       final bottom = translateY(
           textBlock.boundingBox.bottom, rotation, size, absoluteImageSize);
+
+      final blockWidth = right - left;
+      final blockHeight = bottom - top;
+      final textLength = textBlock.text.length;
+      final blockLines = textBlock.lines.length;
+
+      getLongestLine() {
+        if (blockLines <= 1) {
+          return textLength;
+        } else {
+          int maxLenght = 0;
+
+          for (var line in textBlock.lines) {
+            if (line.text.length > maxLenght) {
+              maxLenght = line.text.length;
+            }
+          }
+
+          return maxLenght;
+        }
+      }
+
+      getCharacterSize() {
+        double width;
+        double height;
+
+        width = blockWidth / getLongestLine();
+        height = blockHeight / blockLines;
+
+        return [width, height];
+      }
+
+      fitFontSize() {
+        double fontSize;
+
+        fontSize = getCharacterSize()[1] * 0.68;
+
+        return fontSize;
+      }
+
+      final ParagraphBuilder builder = ParagraphBuilder(
+        ParagraphStyle(
+            textAlign: TextAlign.center,
+            fontSize: fitFontSize(),
+            fontWeight: FontWeight.w200,
+            //fontFamily: "Monospace",
+            textDirection: TextDirection.ltr),
+      );
+      builder.pushStyle(ui.TextStyle(
+          color: const Color.fromARGB(255, 0, 0, 0), background: background));
+      builder.addText(textBlock.text);
+      builder.pop();
 
       touchyCanvas.drawRect(Rect.fromLTRB(left, top, right, bottom), paint,
           onTapDown: (tapDetail) {
@@ -57,7 +97,7 @@ class TextRecognizerPainter extends CustomPainter {
       canvas.drawParagraph(
         builder.build()
           ..layout(ParagraphConstraints(
-            width: right - left,
+            width: blockWidth,
           )),
         Offset(left, top),
       );
