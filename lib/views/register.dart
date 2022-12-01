@@ -1,5 +1,7 @@
-import 'package:bonkers/models/loginuser.dart';
+import 'package:bonkers/controller/database.dart';
 import 'package:bonkers/controller/auth.dart';
+import 'package:bonkers/models/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -13,14 +15,17 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  final db = DatabaseService();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
   final AuthService _auth = AuthService();
   final _registerFormKey = GlobalKey<FormState>();
 
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _nameController.dispose();
 
     super.dispose();
   }
@@ -36,6 +41,20 @@ class _RegisterState extends State<Register> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                TextFormField(
+                  controller: _nameController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a valid name';
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Your name',
+                      prefixIcon: Icon(Icons.person)),
+                ),
+                const SizedBox(height: 15),
                 TextFormField(
                   controller: _emailController,
                   validator: (value) {
@@ -71,9 +90,13 @@ class _RegisterState extends State<Register> {
                     onPressed: () async {
                       if (_registerFormKey.currentState!.validate()) {
                         dynamic result = await _auth.registerEmailPassword(
-                            LoginUser(
-                                email: _emailController.text,
-                                password: _passwordController.text));
+                            _emailController.text, _passwordController.text);
+
+                        AuthenticatedUser user = AuthenticatedUser(
+                            email: _emailController.text,
+                            firstName: _nameController.text);
+
+                        db.addUser(user, result);
                         if (result.uid == null) {
                           showDialog(
                               context: context,

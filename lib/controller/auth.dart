@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/firebaseuser.dart';
-import '../models/loginuser.dart';
 
 final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
   return FirebaseAuth.instance;
@@ -16,7 +15,6 @@ final authStateChangesProvider = StreamProvider.autoDispose<User?>((ref) {
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   FirebaseUser? _firebaseUser(User? user) {
     return user != null ? FirebaseUser(uid: user.uid) : null;
   }
@@ -35,10 +33,10 @@ class AuthService {
     }
   }
 
-  Future signInEmailPassword(LoginUser _login) async {
+  Future signInEmailPassword(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-          email: _login.email.toString(), password: _login.password.toString());
+          email: email.toString(), password: password.toString());
       User? user = userCredential.user;
       return _firebaseUser(user);
     } on FirebaseAuthException catch (e) {
@@ -46,12 +44,11 @@ class AuthService {
     }
   }
 
-  Future registerEmailPassword(LoginUser _login) async {
+  Future registerEmailPassword(String email, String password) async {
     try {
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
-              email: _login.email.toString(),
-              password: _login.password.toString());
+              email: email.toString(), password: password.toString());
       User? user = userCredential.user;
       return _firebaseUser(user);
     } on FirebaseAuthException catch (e) {
