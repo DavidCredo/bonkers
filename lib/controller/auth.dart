@@ -15,7 +15,6 @@ final authStateChangesProvider = StreamProvider.autoDispose<User?>((ref) {
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   FirebaseUser? _firebaseUser(User? user) {
     return user != null ? FirebaseUser(uid: user.uid) : null;
   }
@@ -49,8 +48,7 @@ class AuthService {
     try {
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
-              email: email.toString(),
-              password: password.toString());
+              email: email.toString(), password: password.toString());
       User? user = userCredential.user;
       return _firebaseUser(user);
     } on FirebaseAuthException catch (e) {

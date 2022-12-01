@@ -20,14 +20,15 @@ class BonListWidget extends ConsumerWidget {
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => BonDetailView(items: bons[index].articles))),
+                            builder: (context) =>
+                                BonDetailView(bon: bons[index]))),
                     title: Text(bons[index].title),
                     subtitle: Text(
                       bons[index].createdAt.toDate().toString(),
                     ),
                   ),
                 ))),
-        error: (e, st) => Center(
+        error: (e, stackTrace) => Center(
               child: Text(e.toString()),
             ),
         loading: (() => const Center(
