@@ -20,10 +20,7 @@ class TextRecognizerPainter extends CustomPainter {
 
     final Paint paint = Paint()
       ..style = PaintingStyle.fill
-      ..color = const Color.fromARGB(50, 89, 255, 100);
-
-    final Paint background = Paint()
-      ..color = const Color.fromARGB(187, 255, 253, 253);
+      ..color = const Color.fromARGB(255, 255, 255, 255);
 
     for (final textBlock in recognizedText.blocks) {
       final left = translateX(
@@ -69,21 +66,22 @@ class TextRecognizerPainter extends CustomPainter {
       fitFontSize() {
         double fontSize;
 
-        fontSize = getCharacterSize()[1] * 0.68;
+        fontSize = getCharacterSize()[1] *
+            0.73; // accounts for whitespace in fontfamily
 
         return fontSize;
       }
 
       final ParagraphBuilder builder = ParagraphBuilder(
         ParagraphStyle(
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left,
             fontSize: fitFontSize(),
-            fontWeight: FontWeight.w200,
-            //fontFamily: "Monospace",
+            height: 1.2,
+            fontFamily: "Fira Sans Extra Condensed",
             textDirection: TextDirection.ltr),
       );
-      builder.pushStyle(ui.TextStyle(
-          color: const Color.fromARGB(255, 0, 0, 0), background: background));
+      builder
+          .pushStyle(ui.TextStyle(color: const Color.fromARGB(255, 0, 0, 0)));
       builder.addText(textBlock.text);
       builder.pop();
 
