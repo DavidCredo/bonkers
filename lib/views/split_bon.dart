@@ -2,24 +2,24 @@ import 'dart:io';
 import 'package:exif/exif.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:touchable/touchable.dart';
 import '../controller/text_detector_painter.dart';
 
-class SplitBon extends StatefulWidget {
+class SplitBon extends ConsumerStatefulWidget {
   const SplitBon({super.key, required this.pickedFile});
   final XFile pickedFile;
 
   @override
-  State<SplitBon> createState() => _SplitBonState();
+  ConsumerState<SplitBon> createState() => _SplitBonState();
 }
 
-class _SplitBonState extends State<SplitBon> {
+class _SplitBonState extends ConsumerState<SplitBon> {
   final TextRecognizer _textRecognizer = TextRecognizer();
   bool _canProcess = true;
   bool _isBusy = false;
-  CustomPaint? _customPaint;
   RecognizedText? _text;
   File? _image;
   Size? _imageSize;
@@ -42,6 +42,7 @@ class _SplitBonState extends State<SplitBon> {
 
   @override
   Widget build(BuildContext context) {
+    bool showOverlay = ref.watch(visiblityNotifierProvider).showOverlay;
     return Scaffold(
         appBar: AppBar(
           title: Wrap(
@@ -61,15 +62,25 @@ class _SplitBonState extends State<SplitBon> {
                 if (_text != null &&
                     _imageSize != null &&
                     _imageRotation != null)
-                  CanvasTouchDetector(
-                    builder: (context) => CustomPaint(
-                        painter: TextRecognizerPainter(
-                            _text!, _imageSize!, _imageRotation!, context)),
-                    gesturesToOverride: const [
-                      GestureType.onTapDown,
-                      GestureType.onLongPressStart
-                    ],
+                  Visibility(
+                    visible: showOverlay,
+                    maintainSize: true,
+                    maintainAnimation: true,
+                    maintainInteractivity: true,
+                    maintainState: true,
+                    child: CanvasTouchDetector(
+                      builder: (context) => CustomPaint(
+                          painter: TextRecognizerPainter(_text!, _imageSize!,
+                              _imageRotation!, context, ref)),
+                      gesturesToOverride: const [
+                        GestureType.onTapDown,
+                        GestureType.onTapUp,
+                        GestureType.onLongPressStart,
+                        GestureType.onLongPressEnd
+                      ],
+                    ),
                   ),
+
                 if (_text == null)
                   const Text(
                       'Leider konnte auf deinem Bild kein Text erkannt werden.') // TODO: schöneres Feedback und Möglichkeit direkt ein neues Bild aufzunehmen / zu wählen.,
@@ -137,3 +148,16 @@ class _SplitBonState extends State<SplitBon> {
     }
   }
 }
+
+class VisibilityNotifier extends ChangeNotifier {
+  bool showOverlay = true;
+
+  void changeVisiblity({bool? show}) {
+    show != null ? showOverlay = show : showOverlay = !showOverlay;
+
+    notifyListeners();
+  }
+}
+
+final visiblityNotifierProvider =
+    ChangeNotifierProvider((ref) => VisibilityNotifier());
