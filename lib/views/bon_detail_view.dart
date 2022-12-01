@@ -1,4 +1,5 @@
 import 'package:bonkers/views/helpers/bon_item_widget.dart';
+import 'package:bonkers/views/helpers/payer_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -33,31 +34,9 @@ class _BonDetailViewState extends State<BonDetailView> {
                           "€"),
                     ))),
           ),
-          Expanded(
-              child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.all(8),
-            children: <Widget>[
-              Container(
-                width: 75,
-                child: const CircleAvatar(
-                  backgroundColor: Colors.black,
-                  maxRadius: 50,
-                  child: Text("AH"),
-                ),
-              ),
-              const CircleAvatar(
-                backgroundColor: Colors.black,
-                maxRadius: 50,
-                child: Text("AH"),
-              ),
-              const CircleAvatar(
-                backgroundColor: Colors.black,
-                maxRadius: 50,
-                child: Text("AH"),
-              )
-            ],
-          ))
+          const Expanded(
+            child: PayerListWidget(),
+          )
         ],
       ),
     );
