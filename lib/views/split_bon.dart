@@ -8,15 +8,15 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 import 'package:touchable/touchable.dart';
 import '../controller/text_detector_painter.dart';
 
-class SplitBon extends ConsumerStatefulWidget {
+class SplitBon extends StatefulWidget {
   const SplitBon({super.key, required this.pickedFile});
   final XFile pickedFile;
 
   @override
-  ConsumerState<SplitBon> createState() => _SplitBonState();
+  State<SplitBon> createState() => _SplitBonState();
 }
 
-class _SplitBonState extends ConsumerState<SplitBon> {
+class _SplitBonState extends State<SplitBon> {
   final TextRecognizer _textRecognizer = TextRecognizer();
   bool _canProcess = true;
   bool _isBusy = false;
@@ -42,7 +42,6 @@ class _SplitBonState extends ConsumerState<SplitBon> {
 
   @override
   Widget build(BuildContext context) {
-    bool showOverlay = ref.watch(visiblityNotifierProvider).showOverlay;
     return Scaffold(
         appBar: AppBar(
           title: Wrap(
@@ -62,24 +61,29 @@ class _SplitBonState extends ConsumerState<SplitBon> {
                 if (_text != null &&
                     _imageSize != null &&
                     _imageRotation != null)
-                  Visibility(
-                    visible: showOverlay,
-                    maintainSize: true,
-                    maintainAnimation: true,
-                    maintainInteractivity: true,
-                    maintainState: true,
-                    child: CanvasTouchDetector(
-                      builder: (context) => CustomPaint(
-                          painter: TextRecognizerPainter(_text!, _imageSize!,
-                              _imageRotation!, context, ref)),
-                      gesturesToOverride: const [
-                        GestureType.onTapDown,
-                        GestureType.onTapUp,
-                        GestureType.onLongPressStart,
-                        GestureType.onLongPressEnd
-                      ],
-                    ),
-                  ),
+                  Consumer(builder: (_, WidgetRef ref, __) {
+                    bool showOverlay =
+                        ref.watch(visiblityNotifierProvider).showOverlay;
+                    return Visibility(
+                      visible: showOverlay,
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainInteractivity: true,
+                      maintainState: true,
+                      child: CanvasTouchDetector(
+                        builder: (context) => CustomPaint(
+                            painter: TextRecognizerPainter(_text!, _imageSize!,
+                                _imageRotation!, context, ref)),
+                        gesturesToOverride: const [
+                          GestureType.onTapDown,
+                          GestureType.onTapUp,
+                          GestureType.onLongPressStart,
+                          GestureType.onLongPressEnd,
+                          GestureType.onLongPressMoveUpdate
+                        ],
+                      ),
+                    );
+                  }),
 
                 if (_text == null)
                   const Text(

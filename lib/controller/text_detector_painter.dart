@@ -29,20 +29,23 @@ class TextRecognizerPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..color = const Color.fromARGB(0, 255, 255, 255);
 
+    Future<void> showOverlayFallback() async {
+      await Future.delayed(const Duration(seconds: 1));
+      return ref.read(visiblityNotifierProvider).changeVisiblity(show: true);
+    }
+
     touchyCanvas.drawRect(
-      Rect.fromLTRB(0, 0, MediaQuery.of(context).size.width,
-          MediaQuery.of(context).size.height),
-      noPaint,
-      onTapDown: (details) {
-        ref.read(visiblityNotifierProvider).changeVisiblity(show: false);
-      },
-      onTapUp: (details) {
-        ref.read(visiblityNotifierProvider).changeVisiblity(show: true);
-      },
-      onLongPressEnd: (details) {
-        ref.read(visiblityNotifierProvider).changeVisiblity(show: true);
-      },
-    );
+        Rect.fromLTRB(0, 0, MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height),
+        noPaint, onTapDown: (details) {
+      ref.read(visiblityNotifierProvider).changeVisiblity(show: false);
+    }, onTapUp: (details) {
+      ref.read(visiblityNotifierProvider).changeVisiblity(show: true);
+    }, onLongPressMoveUpdate: (details) {
+      showOverlayFallback();
+    }, onLongPressEnd: (details) {
+      ref.read(visiblityNotifierProvider).changeVisiblity();
+    });
 
     for (final textBlock in recognizedText.blocks) {
       final left = translateX(
@@ -110,7 +113,8 @@ class TextRecognizerPainter extends CustomPainter {
       touchyCanvas.drawRect(Rect.fromLTRB(left, top, right, bottom), paint,
           onTapDown: (tapDetail) {
         // TODO: unsauber, wird auch bei longpress aufgerufen
-        print(textBlock.text);
+        print(textBlock
+            .text); // Auchtung: es wird nur die erste Zeile des Textblocks ausgegeben
       }, onLongPressStart: (tapDetail) {
         print("longpress");
       });
