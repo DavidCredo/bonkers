@@ -1,5 +1,6 @@
 import 'package:bonkers/controller/auth.dart';
 import 'package:bonkers/models/bon.dart';
+import 'package:bonkers/models/bon_item.dart';
 import 'package:bonkers/models/firebaseuser.dart';
 import 'package:bonkers/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,14 +10,26 @@ import 'package:uuid/uuid.dart';
 
 var uuid = const Uuid();
 
-final userCollectionProvider = StreamProvider.autoDispose((ref) {
+// final userProvider = StreamProvider.autoDispose((ref) {
+//   final userStream = ref.watch(authStateChangesProvider);
+
+//   final user = userStream.value;
+
+//   if (user != null) {
+//     var docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+//     return docRef.snapshots();
+//   } else {
+//     return const Stream.empty();
+//   }
+// });
+final userCollectionProvider = StreamProvider.autoDispose<AuthenticatedUser>((ref) {
   final userStream = ref.watch(authStateChangesProvider);
 
   final user = userStream.value;
 
   if (user != null) {
     var docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
-    return docRef.snapshots();
+    return docRef.snapshots().map((snapshot) => AuthenticatedUser.fromJson(snapshot.data()!) );
   } else {
     return const Stream.empty();
   }
@@ -57,5 +70,23 @@ class DatabaseService {
       final userAsJson = doc.data() as Map<String, dynamic>;
       return AuthenticatedUser.fromJson(userAsJson);
     });
+  }
+
+  void addBon(FirebaseUser user, Bon bon) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user.uid)
+        .collection("Bons")
+        .doc(bon.uid)
+        .set(bon.toJson());
+  }
+
+  void updatePayer(FirebaseUser user, Bon bon) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user.uid)
+        .collection("Bons")
+        .doc(bon.uid)
+        .update({"articles": bon.articles});
   }
 }
