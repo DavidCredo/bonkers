@@ -1,17 +1,19 @@
+import 'package:bonkers/controller/auth.dart';
 import 'package:bonkers/views/helpers/bon_list_widget.dart';
 import 'package:bonkers/views/split_bon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/bon.dart';
 
-class HomeView extends StatefulWidget {
+class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  ConsumerState<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeViewState extends ConsumerState<HomeView> {
   List<String>? dataset;
   ImagePicker? _imagePicker;
 
@@ -38,12 +40,21 @@ class _HomeViewState extends State<HomeView> {
       "Eintrag 14"
     ];
     super.initState();
+    ref.read(firebaseAuthProvider);
   }
 
   @override
   Widget build(BuildContext context) {
+    final auth = ref.watch(firebaseAuthProvider);
     return Scaffold(
         appBar: AppBar(
+          actions: [
+            IconButton(
+                onPressed: () async {
+                  await auth.signOut();
+                },
+                icon: const Icon(Icons.logout))
+          ],
           title: Wrap(
               children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
         ),
