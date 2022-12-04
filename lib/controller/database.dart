@@ -22,14 +22,17 @@ var uuid = const Uuid();
 //     return const Stream.empty();
 //   }
 // });
-final userCollectionProvider = StreamProvider.autoDispose<AuthenticatedUser>((ref) {
+final userCollectionProvider =
+    StreamProvider.autoDispose<AuthenticatedUser>((ref) {
   final userStream = ref.watch(authStateChangesProvider);
 
   final user = userStream.value;
 
   if (user != null) {
     var docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
-    return docRef.snapshots().map((snapshot) => AuthenticatedUser.fromJson(snapshot.data()!) );
+    return docRef
+        .snapshots()
+        .map((snapshot) => AuthenticatedUser.fromJson(snapshot.data()!));
   } else {
     return const Stream.empty();
   }
@@ -45,7 +48,7 @@ final userBonsCollectionProvider = StreamProvider.autoDispose<List<Bon>>((ref) {
         .collection('users')
         .doc(user.uid)
         .collection('Bons');
-    return collRef.snapshots().map((snapShot) => snapShot.docs
+    return collRef.snapshots().map((snapshot) => snapshot.docs
         .map((document) => Bon.fromJson(document.data()))
         .toList());
   } else {
@@ -56,37 +59,22 @@ final userBonsCollectionProvider = StreamProvider.autoDispose<List<Bon>>((ref) {
 class DatabaseService {
   final db = FirebaseFirestore.instance.collection('users');
 
-  void addUser(AuthenticatedUser user, FirebaseUser authenticatedUser) async {
+  void addUser(AuthenticatedUser user) async {
     await FirebaseFirestore.instance
         .collection("users")
-        .doc(authenticatedUser.uid)
+        .doc(user.uid)
         .set(user.toJson());
-    var userName = user.firstName;
-    print("New user added: $userName");
   }
 
-  void getUser(AuthenticatedUser user, FirebaseUser authenticatedUser) async {
-    await db.doc(authenticatedUser.uid).get().then((DocumentSnapshot doc) {
-      final userAsJson = doc.data() as Map<String, dynamic>;
-      return AuthenticatedUser.fromJson(userAsJson);
-    });
+  void addBon(AuthenticatedUser user, Bon bon) async {
+    await db.doc(user.uid).collection("Bons").doc(bon.uid).set(bon.toJson());
   }
 
-  void addBon(FirebaseUser user, Bon bon) async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(user.uid)
-        .collection("Bons")
-        .doc(bon.uid)
-        .set(bon.toJson());
+  void updatePayerList(AuthenticatedUser user) async {
+    await db.doc(user.uid).update({"payers": user.payers});
   }
 
-  void updatePayer(FirebaseUser user, Bon bon) async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(user.uid)
-        .collection("Bons")
-        .doc(bon.uid)
-        .update({"articles": bon.articles});
+  void updatePayerOfItem(AuthenticatedUser user, Bon bon) async {
+    await db.doc(user.uid).collection('Bons').doc(bon.uid).set(bon.toJson());
   }
 }
