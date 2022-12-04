@@ -92,17 +92,19 @@ class _RegisterState extends State<Register> {
                         dynamic result = await _auth.registerEmailPassword(
                             _emailController.text, _passwordController.text);
 
-                        AuthenticatedUser user = AuthenticatedUser(
-                            email: _emailController.text,
-                            firstName: _nameController.text);
-
-                        db.addUser(user, result);
                         if (result.uid == null) {
                           showDialog(
                               context: context,
                               builder: (context) {
                                 return AlertDialog(content: Text(result.code));
                               });
+                        } else {
+                          AuthenticatedUser user = AuthenticatedUser(
+                              email: _emailController.text,
+                              firstName: _nameController.text,
+                              uid: result.uid);
+
+                          db.addUser(user);
                         }
                       }
                     },
