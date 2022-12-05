@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:touchable/touchable.dart';
 import '../controller/text_detector_painter.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class SplitBon extends StatefulWidget {
   const SplitBon({super.key, required this.pickedFile});
@@ -21,7 +22,7 @@ class _SplitBonState extends State<SplitBon> {
   bool _canProcess = true;
   bool _isBusy = false;
   RecognizedText? _text;
-  File? _image;
+  File? _strippedImage;
   Size? _imageSize;
   InputImageRotation? _imageRotation;
   double? _width;
@@ -57,7 +58,7 @@ class _SplitBonState extends State<SplitBon> {
             child: Stack(
               fit: StackFit.expand,
               children: <Widget>[
-                Image.file(_image!),
+                if (_strippedImage != null) Image.file(_strippedImage!),
                 if (_text != null &&
                     _imageSize != null &&
                     _imageRotation != null)
@@ -92,45 +93,58 @@ class _SplitBonState extends State<SplitBon> {
             )));
   }
 
+// TODO: Logig auslagern?(!)
   Future _processPickedFile(XFile? pickedFile) async {
     final path = pickedFile?.path;
+    final strippedPath = '${path}_compressed.jpg';
     if (path == null) {
       return;
     }
+
+    await FlutterImageCompress.compressAndGetFile(path, strippedPath);
+
     setState(() {
-      _image = File(path);
+      _strippedImage = File(strippedPath);
     });
 
+    // image with exif data (needed for orientation information)
     final Uint8List bytes = await pickedFile!.readAsBytes();
-    final decodedImage = await decodeImageFromList(bytes);
     final exifData = await readExifFromBytes(bytes);
+
+    // image with stripped exif data
+    final Uint8List strippedBytes = await _strippedImage!.readAsBytes();
+    final decodedImage = await decodeImageFromList(strippedBytes);
     final imageWidth = decodedImage.width.toDouble();
     final imageHeight = decodedImage.height.toDouble();
 
     getImageRotation() {
-      print({exifData['Image Orientation'], imageWidth, imageHeight});
-      // Exif data (pre smartphone standard) is based on horizontal (0 deg) images (most digicam pictures), the code is based vertically (0 deg, most smartphone pictures)
       final orientation = exifData['Image Orientation']!.printable;
 
       if (orientation == "Horizontal (normal)" && imageHeight < imageWidth) {
         print("1"); // works with live photos
-        return InputImageRotation.rotation90deg;
+        return InputImageRotation.rotation0deg;
       } else if (orientation == "Rotated 180" && imageHeight < imageWidth) {
         print("2"); // doesnt work
-        return InputImageRotation.rotation270deg;
+        return InputImageRotation.rotation180deg;
       } else if (orientation == "Rotated 90 CCW" && imageHeight > imageWidth) {
         print("3"); // doesnt work
-        return InputImageRotation.rotation180deg;
+        return InputImageRotation.rotation270deg;
       } else if (orientation == "Rotated 90 CW" && imageHeight > imageWidth) {
         print("4"); // doesnt work
+        return InputImageRotation.rotation90deg;
+      } else if (imageHeight < imageWidth) {
+        print("5"); // doesnt work
         return InputImageRotation.rotation0deg;
+      } else if (imageHeight > imageWidth) {
+        print("6"); // doesnt work
+        return InputImageRotation.rotation90deg;
       } else {
-        print("5");
-        return InputImageRotation.rotation0deg; // works with gallery photots
-      } // if in doubt, the function still needs this information. In most cases its 0 degrees
+        print("7"); // doesnt work
+        return InputImageRotation.rotation90deg;
+      } // if in doubt or square, the function still needs this information. In most cases its 90 degrees
     }
 
-    final inputImage = InputImage.fromFilePath(path);
+    final inputImage = InputImage.fromFilePath(strippedPath);
 
     _imageSize = Size(imageWidth, imageHeight);
     _imageRotation = getImageRotation();
