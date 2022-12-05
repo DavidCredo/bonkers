@@ -121,25 +121,18 @@ class _SplitBonState extends State<SplitBon> {
       final orientation = exifData['Image Orientation']!.printable;
 
       if (orientation == "Horizontal (normal)" && imageHeight < imageWidth) {
-        print("1"); // works with live photos
         return InputImageRotation.rotation0deg;
       } else if (orientation == "Rotated 180" && imageHeight < imageWidth) {
-        print("2"); // doesnt work
         return InputImageRotation.rotation180deg;
       } else if (orientation == "Rotated 90 CCW" && imageHeight > imageWidth) {
-        print("3"); // doesnt work
         return InputImageRotation.rotation270deg;
       } else if (orientation == "Rotated 90 CW" && imageHeight > imageWidth) {
-        print("4"); // doesnt work
         return InputImageRotation.rotation90deg;
       } else if (imageHeight < imageWidth) {
-        print("5"); // doesnt work
         return InputImageRotation.rotation0deg;
       } else if (imageHeight > imageWidth) {
-        print("6"); // doesnt work
         return InputImageRotation.rotation90deg;
       } else {
-        print("7"); // doesnt work
         return InputImageRotation.rotation90deg;
       } // if in doubt or square, the function still needs this information. In most cases its 90 degrees
     }
