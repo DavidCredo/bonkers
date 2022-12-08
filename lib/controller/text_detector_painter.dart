@@ -113,8 +113,7 @@ class TextRecognizerPainter extends CustomPainter {
       touchyCanvas.drawRect(Rect.fromLTRB(left, top, right, bottom), paint,
           onTapDown: (tapDetail) {
         // TODO: unsauber, wird auch bei longpress aufgerufen
-        print(textBlock
-            .text); // Auchtung: es wird nur die erste Zeile des Textblocks ausgegeben
+        print(textBlock.text);
       }, onLongPressStart: (tapDetail) {
         print("longpress");
       });

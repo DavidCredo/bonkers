@@ -147,12 +147,46 @@ class _SplitBonState extends State<SplitBon> {
     processImage(inputImage);
   }
 
+// filter for all blocks, which with their text content represent the collection of items of the shopping receipt
+  RecognizedText? itemsFilter(RecognizedText? recognizedText) {
+    if (recognizedText == null) return null;
+
+    final List<String> blacklist = [
+      "kasse",
+      "rechnung",
+      "summe",
+      "bar",
+      "mwst"
+    ];
+
+    List<TextBlock> filteredBlocks = [];
+    List<String> filteredTextStrings = [];
+
+    for (final block in recognizedText.blocks) {
+      for (final textBlock in block.lines) {
+        if (blacklist
+            .any((word) => textBlock.text.toLowerCase().contains(word))) {
+          break;
+        }
+
+        if (textBlock.text.contains(RegExp("[0-9]"))) {
+          if (!filteredBlocks.contains(block)) filteredBlocks.add(block);
+          filteredTextStrings.add(textBlock.text);
+        }
+      }
+    }
+
+    String filteredText = filteredTextStrings.join(" ");
+
+    return RecognizedText(text: filteredText, blocks: filteredBlocks);
+  }
+
   Future<void> processImage(InputImage inputImage) async {
     if (!_canProcess) return;
     if (_isBusy) return;
     _isBusy = true;
     final recognizedText = await _textRecognizer.processImage(inputImage);
-    _text = recognizedText;
+    _text = itemsFilter(recognizedText);
     _isBusy = false;
     if (mounted) {
       setState(() {});
@@ -160,6 +194,7 @@ class _SplitBonState extends State<SplitBon> {
   }
 }
 
+//TODO: in eigene Datei auslagern
 class VisibilityNotifier extends ChangeNotifier {
   bool showOverlay = true;
 
