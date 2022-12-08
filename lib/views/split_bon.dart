@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:touchable/touchable.dart';
+import '../controller/bonItemsFilter.dart';
 import '../controller/text_detector_painter.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
@@ -21,7 +22,8 @@ class _SplitBonState extends State<SplitBon> {
   final TextRecognizer _textRecognizer = TextRecognizer();
   bool _canProcess = true;
   bool _isBusy = false;
-  RecognizedText? _text;
+  List<TextLine>? _text;
+  String? bonTitle;
   File? _strippedImage;
   Size? _imageSize;
   InputImageRotation? _imageRotation;
@@ -93,7 +95,7 @@ class _SplitBonState extends State<SplitBon> {
             )));
   }
 
-// TODO: Logig auslagern?(!)
+// TODO: Logik auslagern!
   Future _processPickedFile(XFile? pickedFile) async {
     final path = pickedFile?.path;
     final strippedPath = '${path}_compressed.jpg';
@@ -147,45 +149,12 @@ class _SplitBonState extends State<SplitBon> {
     processImage(inputImage);
   }
 
-// filter for all blocks, which with their text content represent the collection of items of the shopping receipt
-  RecognizedText? itemsFilter(RecognizedText? recognizedText) {
-    if (recognizedText == null) return null;
-
-    final List<String> blacklist = [
-      "kasse",
-      "rechnung",
-      "summe",
-      "bar",
-      "mwst"
-    ];
-
-    List<TextBlock> filteredBlocks = [];
-    List<String> filteredTextStrings = [];
-
-    for (final block in recognizedText.blocks) {
-      for (final textBlock in block.lines) {
-        if (blacklist
-            .any((word) => textBlock.text.toLowerCase().contains(word))) {
-          break;
-        }
-
-        if (textBlock.text.contains(RegExp("[0-9]"))) {
-          if (!filteredBlocks.contains(block)) filteredBlocks.add(block);
-          filteredTextStrings.add(textBlock.text);
-        }
-      }
-    }
-
-    String filteredText = filteredTextStrings.join(" ");
-
-    return RecognizedText(text: filteredText, blocks: filteredBlocks);
-  }
-
   Future<void> processImage(InputImage inputImage) async {
     if (!_canProcess) return;
     if (_isBusy) return;
     _isBusy = true;
     final recognizedText = await _textRecognizer.processImage(inputImage);
+    bonTitle = recognizedText.blocks.first.lines.first.text;
     _text = itemsFilter(recognizedText);
     _isBusy = false;
     if (mounted) {
