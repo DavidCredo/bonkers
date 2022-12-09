@@ -49,15 +49,17 @@ class TextRecognizerPainter extends CustomPainter {
       ref.read(visiblityNotifierProvider).changeVisiblity();
     });
 
-    List<BonItem> entries = [];
+    Map<double, BonItem> entries = {};
 
     String? itemTitle;
     double? itemPrice;
 
     for (final textLine in recognizedText) {
       // create bon items for database
+      //TODO: um eine Zeile "zu weit". Koordinaten der darunterliegenden Zeile speichern (korrekte zusammengefügtes) Objekt von der TextLine dadrüber.
       if (itemTitle != null && itemPrice != null) {
-        entries.add(BonItem(price: itemPrice, title: itemTitle));
+        entries[translateY(textLine.boundingBox.center.dy, rotation, size,
+            absoluteImageSize)] = BonItem(price: itemPrice, title: itemTitle);
         itemTitle = null;
         itemPrice = null;
       }
@@ -102,10 +104,14 @@ class TextRecognizerPainter extends CustomPainter {
 
       touchyCanvas.drawRect(Rect.fromLTRB(left, top, right, bottom), paint,
           onTapDown: (tapDetail) {
-        // TODO: unsauber, wird auch bei longpress aufgerufen
-        print(textLine.text);
+        entries.forEach((key, value) {
+          if (key < bottom && key > top) {
+            print({value.title, value.price});
+          }
+        });
       }, onLongPressStart: (tapDetail) {
-        print("longpress");
+        // TODO: unsauber, onTap wird auch bei longpress aufgerufen
+        print("longpress action");
       });
 
       canvas.drawParagraph(
