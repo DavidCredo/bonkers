@@ -22,7 +22,7 @@ List<TextLine>? itemsFilter(RecognizedText? recognizedText) {
       .indexWhere((element) => (element.text.toLowerCase().contains('eur')));
   int endPos = allLines.lastIndexWhere((element) =>
       (element.text.toLowerCase().contains('summe') ||
-          element.text.toLowerCase().contains('total')));
+          element.text.toLowerCase().contains('zu zahlen')));
 
   sortedLines = allLines.sublist(startPos + 1, endPos);
 
@@ -30,9 +30,11 @@ List<TextLine>? itemsFilter(RecognizedText? recognizedText) {
   for (final textLine in sortedLines) {
     String treatCandidate(String candidate) {
       return candidate
-          .replaceAll(RegExp('lIi!'), '1')
+          .replaceAll(RegExp('[lIi!]'), '1')
           .replaceAll(RegExp(','), '.')
-          .replaceAll(RegExp('O'), '0');
+          .replaceAll(RegExp('O'), '0')
+          .replaceAll(RegExp('[A-Za-z]'), '')
+          .replaceAll(RegExp(' 1'), '');
     }
 
     int? parseInt(String candidate) {
@@ -59,12 +61,15 @@ List<TextLine>? itemsFilter(RecognizedText? recognizedText) {
       treatedLines.add(textLine);
     } else if (isItemCount(textLine.text)) {
       // is discarded and must be tested first, since any int can be converted to a double.
-      // Q: "!.00 1" und "1.00 1" verschwinden auch, wieso?
       continue;
     } else if (isAmount(textLine.text)) {
-      // Q: keine Einzelpreise     max(double.tryParse(textLine.text) ?? 0.0, currentAmount ?? 0.0)
-      // Q: wie?   textLine.text = treatCandidate(textLine.text);
-      treatedLines.add(textLine);
+      // TODO: keine Einzelpreise     max(double.tryParse(textLine.text) ?? 0.0, currentAmount ?? 0.0)
+      treatedLines.add(TextLine(
+          text: treatCandidate(textLine.text),
+          elements: textLine.elements,
+          boundingBox: textLine.boundingBox,
+          recognizedLanguages: textLine.recognizedLanguages,
+          cornerPoints: textLine.cornerPoints));
     }
   }
 

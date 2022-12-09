@@ -73,7 +73,7 @@ class TextRecognizerPainter extends CustomPainter {
       if (isTitle(textLine.text)) {
         itemTitle = textLine.text;
       } else if (isPrice(textLine.text)) {
-        itemPrice = textLine.text as double;
+        itemPrice = double.tryParse(textLine.text);
       }
 
       // paint bon items for interaction:
