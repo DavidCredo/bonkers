@@ -3,7 +3,7 @@ class BonItem {
 
   final double price;
   final String title;
-  String? payer;
+  final String? payer;
 
   factory BonItem.fromJson(Map<String, dynamic> data) {
     final price = data["price"] as double;
@@ -21,7 +21,10 @@ class BonItem {
     };
   }
 
-  void setPayer(String newPayer) {
-    payer = newPayer;
+  BonItem copyWith({double? price, String? title, String? payer}) {
+    return BonItem(
+        price: price ?? this.price,
+        title: title ?? this.title,
+        payer: payer ?? this.payer);
   }
 }

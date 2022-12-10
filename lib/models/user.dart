@@ -24,6 +24,17 @@ class AuthenticatedUser {
         firstName: firstName, email: email, payers: payers, uid: uid);
   }
 
+  AuthenticatedUser copyWith(
+          {String? firstName,
+          String? email,
+          List<dynamic>? payers,
+          String? uid}) =>
+      AuthenticatedUser(
+          firstName: firstName ?? this.firstName,
+          email: email ?? this.email,
+          uid: uid ?? this.uid,
+          payers: payers ?? this.payers);
+
   Map<String, dynamic> toJson() {
     return {
       'firstName': firstName,
