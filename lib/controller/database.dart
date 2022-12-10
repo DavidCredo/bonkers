@@ -10,18 +10,6 @@ import 'package:uuid/uuid.dart';
 
 var uuid = const Uuid();
 
-// final userProvider = StreamProvider.autoDispose((ref) {
-//   final userStream = ref.watch(authStateChangesProvider);
-
-//   final user = userStream.value;
-
-//   if (user != null) {
-//     var docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
-//     return docRef.snapshots();
-//   } else {
-//     return const Stream.empty();
-//   }
-// });
 final userCollectionProvider =
     StreamProvider.autoDispose<AuthenticatedUser>((ref) {
   final userStream = ref.watch(authStateChangesProvider);
@@ -55,7 +43,6 @@ final userBonsCollectionProvider = StreamProvider.autoDispose<List<Bon>>((ref) {
     return const Stream.empty();
   }
 });
-
 class DatabaseService {
   final db = FirebaseFirestore.instance.collection('users');
 
@@ -66,8 +53,18 @@ class DatabaseService {
         .set(user.toJson());
   }
 
-  void addBon(AuthenticatedUser user, Bon bon) async {
+  Future addBon(User user, Bon bon) async {
     await db.doc(user.uid).collection("Bons").doc(bon.uid).set(bon.toJson());
+  }
+
+  Future updateBon(User user, Bon bon) async {
+    List<Map<String, dynamic>> changedItems =
+        bon.articles.map((article) => article.toJson()).toList();
+    await db
+        .doc(user.uid)
+        .collection("Bons")
+        .doc(bon.uid)
+        .update({"articles": changedItems});
   }
 
   void updatePayerList(AuthenticatedUser user) async {
@@ -78,3 +75,7 @@ class DatabaseService {
     await db.doc(user.uid).collection('Bons').doc(bon.uid).set(bon.toJson());
   }
 }
+
+final databaseProvider = Provider.autoDispose<DatabaseService>((ref) {
+  return DatabaseService();
+});
