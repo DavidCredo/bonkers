@@ -1,20 +1,18 @@
 import 'package:bonkers/controller/database.dart';
 import 'package:bonkers/controller/auth.dart';
 import 'package:bonkers/models/user.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Register extends StatefulWidget {
+class Register extends ConsumerStatefulWidget {
   final Function? toggleView;
   const Register({super.key, this.toggleView});
 
   @override
-  State<Register> createState() => _RegisterState();
+  ConsumerState<Register> createState() => _RegisterState();
 }
 
-class _RegisterState extends State<Register> {
+class _RegisterState extends ConsumerState<Register> {
   final db = DatabaseService();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -102,9 +100,10 @@ class _RegisterState extends State<Register> {
                           AuthenticatedUser user = AuthenticatedUser(
                               email: _emailController.text,
                               firstName: _nameController.text,
-                              uid: result.uid);
+                              uid: result.uid,
+                              payers: <String>[]);
 
-                          db.addUser(user);
+                          ref.read(databaseProvider).addUser(user);
                         }
                       }
                     },

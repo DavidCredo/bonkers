@@ -40,43 +40,46 @@ class _HomeViewState extends ConsumerState<HomeView> {
       "Eintrag 14"
     ];
     super.initState();
-    ref.read(firebaseAuthProvider);
   }
 
   @override
   Widget build(BuildContext context) {
-    final auth = ref.watch(firebaseAuthProvider);
     return Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(
-                onPressed: () async {
-                  await auth.signOut();
-                },
-                icon: const Icon(Icons.logout))
-          ],
-          title: Wrap(
-              children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
-        ),
-        body: Stack(children: <Widget>[
-          const BonListWidget(),
-          Stack(fit: StackFit.expand, children: [
-            Positioned(
-                left: 40,
-                bottom: 40,
-                child: ElevatedButton(
-                  child: const Text('From Gallery'),
-                  onPressed: () => _getImage(ImageSource.gallery),
-                )),
-            Positioned(
-                right: 40,
-                bottom: 40,
-                child: ElevatedButton(
-                  child: const Text('Take a picture'),
-                  onPressed: () => _getImage(ImageSource.camera),
-                ))
-          ])
-        ]));
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () async {
+                await ref.read(firebaseAuthProvider).signOut();
+              },
+              icon: const Icon(Icons.logout))
+        ],
+        title:
+            Wrap(children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
+      ),
+      body: Stack(children: <Widget>[
+        const BonList(),
+        Stack(fit: StackFit.expand, children: [
+          Positioned(
+              left: 40,
+              bottom: 40,
+              child: ElevatedButton(
+                child: const Text('From Gallery'),
+                onPressed: () => _getImage(ImageSource.gallery),
+              )),
+          Positioned(
+              right: 40,
+              bottom: 40,
+              child: ElevatedButton(
+                child: const Text('Take a picture'),
+                onPressed: () => _getImage(ImageSource.camera),
+              ))
+        ])
+      ]),
+      bottomNavigationBar: BottomNavigationBar(items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Alle Bons"),
+        BottomNavigationBarItem(icon: Icon(Icons.add), label: "Neuer Bon")
+      ]),
+    );
   }
 
   Future _getImage(ImageSource source) async {
