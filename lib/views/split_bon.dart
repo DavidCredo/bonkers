@@ -46,6 +46,7 @@ class _SplitBonState extends State<SplitBon> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        // TODO: Save und Discard Feature implementieren
         appBar: AppBar(
           title: Wrap(
               children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
