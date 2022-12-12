@@ -25,7 +25,7 @@ List<TextLine>? itemsFilter(RecognizedText? recognizedText) {
           element.text.toLowerCase().contains('summe') ||
           element.text.toLowerCase().contains('total')));
 
-  //TODO: CRITICAL: Trows exceptions from time to time
+  //TODO: CRITICAL: Trows exception when startPos or endPos not found
   sortedLines = allLines.sublist(startPos + 1, endPos - 1);
 
   // now filter out amounts and unit prices

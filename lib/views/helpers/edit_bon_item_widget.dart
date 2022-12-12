@@ -5,11 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EditBonItemDialog extends ConsumerStatefulWidget {
-  final Bon? bon;
-  final List<BonItem>? bonItems;
+  final dynamic bon;
   final int index;
-  const EditBonItemDialog(
-      {super.key, this.bon, this.bonItems, required this.index});
+  const EditBonItemDialog({super.key, required this.bon, required this.index});
 
   @override
   ConsumerState<EditBonItemDialog> createState() => _EditBonItemDialogState();
@@ -24,14 +22,13 @@ class _EditBonItemDialogState extends ConsumerState<EditBonItemDialog> {
   @override
   void initState() {
     super.initState();
-    if (widget.bon != null) {
+    if ((widget.bon.runtimeType) == Bon) {
       _itemTitleController.text = widget.bon!.articles[widget.index].title;
       _itemPriceController.text =
           widget.bon!.articles[widget.index].price.toString();
-    } else {
-      _itemTitleController.text = widget.bonItems![widget.index].title;
-      _itemPriceController.text =
-          widget.bonItems![widget.index].price.toString();
+    } else if ((widget.bon.runtimeType) == List<BonItem>) {
+      _itemTitleController.text = widget.bon![widget.index].title;
+      _itemPriceController.text = widget.bon![widget.index].price.toString();
     }
     bonItemController = BonItemController(ref: ref);
   }
@@ -45,13 +42,7 @@ class _EditBonItemDialogState extends ConsumerState<EditBonItemDialog> {
 
   @override
   Widget build(BuildContext context) {
-    late final Bon? bon;
-    late final List<BonItem>? bonItems;
-    if (widget.bon != null) {
-      bon = widget.bon!;
-    } else {
-      bonItems = widget.bonItems;
-    }
+    final bon = widget.bon;
     final int index = widget.index;
 
     return AlertDialog(
@@ -93,12 +84,12 @@ class _EditBonItemDialogState extends ConsumerState<EditBonItemDialog> {
         ),
         TextButton(
           onPressed: (() {
-            if (widget.bon != null) {
+            if (widget.bon.runtimeType == Bon) {
               bonItemController.updateBonItemInDB(bon!, index,
                   _itemTitleController.text, _itemPriceController.text);
               Navigator.of(context).pop();
             } else {
-              bonItemController.updateBonItemLocally(bonItems!, index,
+              bonItemController.updateBonItemLocally(bon!, index,
                   _itemTitleController.text, _itemPriceController.text);
               Navigator.of(context).pop();
             }

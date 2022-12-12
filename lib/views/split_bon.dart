@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bonkers/views/helpers/payer_list_widget.dart';
 import 'package:exif/exif.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -27,8 +28,6 @@ class _SplitBonState extends State<SplitBon> {
   File? _strippedImage;
   Size? _imageSize;
   InputImageRotation? _imageRotation;
-  double? _width;
-  double? _height;
 
   @override
   void initState() {
@@ -50,49 +49,51 @@ class _SplitBonState extends State<SplitBon> {
           title: Wrap(
               children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
         ),
-        body: SizedBox(
-            height: _width != null && _height != null
-                ? (MediaQuery.of(context).size.width / _width! * _height!)
-                : MediaQuery.of(context).size.height,
-            width: _width != null && _height != null
-                ? (MediaQuery.of(context).size.height / _height! * _width!)
-                : MediaQuery.of(context).size.width,
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                if (_strippedImage != null) Image.file(_strippedImage!),
-                if (_text != null &&
-                    _imageSize != null &&
-                    _imageRotation != null)
-                  Consumer(builder: (_, WidgetRef ref, __) {
-                    bool showOverlay =
-                        ref.watch(visiblityNotifierProvider).showOverlay;
-                    return Visibility(
-                      visible: showOverlay,
-                      maintainSize: true,
-                      maintainAnimation: true,
-                      maintainInteractivity: true,
-                      maintainState: true,
-                      child: CanvasTouchDetector(
-                        builder: (context) => CustomPaint(
-                            painter: TextRecognizerPainter(_text!, _imageSize!,
-                                _imageRotation!, context, ref)),
-                        gesturesToOverride: const [
-                          GestureType.onTapDown,
-                          GestureType.onTapUp,
-                          GestureType.onLongPressStart,
-                          GestureType.onLongPressEnd,
-                          GestureType.onLongPressMoveUpdate
-                        ],
-                      ),
-                    );
-                  }),
-
-                if (_text == null)
-                  const Text(
-                      'Leider konnte auf deinem Bild kein Text erkannt werden.') // TODO: schöneres Feedback und Möglichkeit direkt ein neues Bild aufzunehmen / zu wählen.,
-              ],
-            )));
+        body: Column(
+          children: [
+            FittedBox(
+                child: Stack(children: <Widget>[
+              if (_strippedImage != null) Image.file(_strippedImage!),
+              if (_text != null && _imageSize != null && _imageRotation != null)
+                Consumer(builder: (_, WidgetRef ref, __) {
+                  bool showOverlay =
+                      ref.watch(visiblityNotifierProvider).showOverlay;
+                  return Visibility(
+                    visible: showOverlay,
+                    maintainSize: true,
+                    maintainAnimation: true,
+                    maintainInteractivity: true,
+                    maintainState: true,
+                    child: CanvasTouchDetector(
+                      builder: (context) => CustomPaint(
+                          painter: TextRecognizerPainter(_text!, _imageSize!,
+                              _imageRotation!, context, ref)),
+                      gesturesToOverride: const [
+                        GestureType.onTapDown,
+                        GestureType.onTapUp,
+                        GestureType.onLongPressStart,
+                        GestureType.onLongPressEnd,
+                        GestureType.onLongPressMoveUpdate
+                      ],
+                    ),
+                  );
+                })
+              else
+                const Center(
+                  child: CircularProgressIndicator(),
+                )
+            ])),
+            //TODO: Text-Widget wird angezeigt, weil _text durch das ganze Processing recht lange null ist (das _strippedImage als Grundlage zur Auswertung aber schon früher)
+            if (_text == null)
+              const Text(
+                  'Leider konnte auf deinem Bild keine zusammenhängenden Posten eines Kassenbons erkannt werden.') // TODO: schöneres Feedback und Möglichkeit direkt ein neues Bild aufzunehmen / zu wählen.,
+            else
+              const Flexible(
+                flex: 1,
+                child: PayerListWidget(),
+              )
+          ],
+        ));
   }
 
 // TODO: Logik auslagern!
@@ -143,8 +144,6 @@ class _SplitBonState extends State<SplitBon> {
 
     _imageSize = Size(imageWidth, imageHeight);
     _imageRotation = getImageRotation();
-    _width = imageWidth;
-    _height = imageHeight;
 
     processImage(inputImage);
   }
