@@ -20,44 +20,33 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   void initState() {
     _imagePicker = ImagePicker();
-    // Hier soll die Datenbankabfrage geschehen und der loakle Datensatz gefüllt werden.
-    // TODO: Jeder einzelne Eintrag soll später anklickbar sein und auf das entsprechende split_bon view zeigen.
-    dataset = [
-      "Eintrag 0",
-      "Eintrag 1",
-      "Eintrag 2",
-      "Eintrag 3",
-      "Eintrag 4",
-      "Eintrag 5",
-      "Eintrag 6",
-      "Eintrag 7",
-      "Eintrag 8",
-      "Eintrag 9",
-      "Eintrag 10",
-      "Eintrag 11",
-      "Eintrag 12",
-      "Eintrag 13",
-      "Eintrag 14"
-    ];
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDarkModeEnabled =
+        ref.watch(themeNotifierProvider).isDarkModeEnabled;
     return Scaffold(
       appBar: AppBar(
         actions: [
           IconButton(
+              onPressed: ((() {
+                ref.read(themeNotifierProvider).toggleTheme();
+              })),
+              icon:
+                  Icon(isDarkModeEnabled ? Icons.dark_mode : Icons.light_mode)),
+          IconButton(
               onPressed: () async {
                 await ref.read(firebaseAuthProvider).signOut();
               },
-              icon: const Icon(Icons.logout))
+              icon: const Icon(Icons.logout)),
         ],
         title:
             Wrap(children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
       ),
       body: Stack(children: <Widget>[
-        const BonList(),
+        const AllBonsOverviewList(),
         Stack(fit: StackFit.expand, children: [
           Positioned(
               left: 40,
@@ -74,10 +63,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 onPressed: () => _getImage(ImageSource.camera),
               ))
         ])
-      ]),
-      bottomNavigationBar: BottomNavigationBar(items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Alle Bons"),
-        BottomNavigationBarItem(icon: Icon(Icons.add), label: "Neuer Bon")
       ]),
     );
   }
@@ -96,3 +81,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
         MaterialPageRoute(builder: (context) => SplitBon(pickedFile: result)));
   }
 }
+
+class ThemeNotifier extends ChangeNotifier {
+  bool isDarkModeEnabled = false;
+
+  void toggleTheme() {
+    isDarkModeEnabled = !isDarkModeEnabled;
+    notifyListeners();
+  }
+}
+
+final themeNotifierProvider = ChangeNotifierProvider<ThemeNotifier>((ref) {
+  return ThemeNotifier();
+});

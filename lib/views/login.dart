@@ -1,8 +1,6 @@
 import 'package:bonkers/controller/auth.dart';
 import 'package:flutter/material.dart';
 
-
-
 class Login extends StatefulWidget {
   final Function? toggleView;
   const Login({super.key, this.toggleView});

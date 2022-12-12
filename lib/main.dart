@@ -1,4 +1,5 @@
 import 'package:bonkers/controller/wrapper.dart';
+import 'package:bonkers/views/home.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,16 +15,15 @@ main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDarkMode = ref.watch(themeNotifierProvider).isDarkModeEnabled;
     return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       home: const Wrapper(),
+      theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
     );
   }
 }
