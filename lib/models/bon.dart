@@ -2,6 +2,7 @@ import 'package:bonkers/controller/database.dart';
 import 'package:bonkers/models/bon_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 class Bon {
   Bon(
@@ -59,5 +60,13 @@ class Bon {
       'articles': articles.map((article) => article.toJson()).toList(),
       'uid': uid,
     };
+  }
+
+  static String getSumInEuros(Bon bon) {
+    final sum = bon.articles
+        .map((article) => article.price)
+        .reduce((value, element) => value + element);
+
+    return NumberFormat.currency(locale: 'eu', symbol: '€').format(sum);
   }
 }
