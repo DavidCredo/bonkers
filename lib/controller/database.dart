@@ -43,6 +43,7 @@ final userBonsCollectionProvider = StreamProvider.autoDispose<List<Bon>>((ref) {
     return const Stream.empty();
   }
 });
+
 class DatabaseService {
   final db = FirebaseFirestore.instance.collection('users');
 
@@ -68,7 +69,9 @@ class DatabaseService {
   }
 
   void updatePayerList(AuthenticatedUser user) async {
-    await db.doc(user.uid).update({"payers": user.payers});
+    List<Map<String, dynamic>> changedPayerList =
+        user.payers!.map((payer) => payer.toJson()).toList();
+    await db.doc(user.uid).update({"payers": changedPayerList});
   }
 
   void updatePayerOfItem(AuthenticatedUser user, Bon bon) async {

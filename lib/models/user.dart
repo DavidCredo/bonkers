@@ -1,10 +1,11 @@
+import 'package:bonkers/models/payer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthenticatedUser {
   final String firstName;
   final String email;
-  final List<dynamic>? payers;
+  final List<Payer>? payers;
   final String uid;
 
   AuthenticatedUser(
@@ -17,7 +18,9 @@ class AuthenticatedUser {
     final firstName = data['firstName'] as String;
     final email = data['email'] as String;
     final payerData = data['payers'] as List<dynamic>?;
-    final payers = payerData != null ? payerData : <String>[];
+    final payers = payerData != null
+        ? payerData.map((payer) => Payer.fromJson(payer)).toList()
+        : <Payer>[];
     final uid = data['uid'] as String;
 
     return AuthenticatedUser(
@@ -27,7 +30,7 @@ class AuthenticatedUser {
   AuthenticatedUser copyWith(
           {String? firstName,
           String? email,
-          List<dynamic>? payers,
+          List<Payer>? payers,
           String? uid}) =>
       AuthenticatedUser(
           firstName: firstName ?? this.firstName,
@@ -39,16 +42,17 @@ class AuthenticatedUser {
     return {
       'firstName': firstName,
       'email': email,
-      'payers': payers,
+      if (payers != null)
+        "payers": payers!.map((payer) => payer.toJson()).toList(),
       'uid': uid
     };
   }
 }
 
 class PayerNotifier extends ChangeNotifier {
-  String selectedPayer = "Niemand";
+  Payer selectedPayer = Payer(color: Color(16043240), name: "Niemand");
 
-  void updatePayer(String newPayer) {
+  void updatePayer(Payer newPayer) {
     selectedPayer = newPayer;
     notifyListeners();
   }

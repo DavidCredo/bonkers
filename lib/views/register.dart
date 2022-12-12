@@ -20,6 +20,7 @@ class _RegisterState extends ConsumerState<Register> {
   final AuthService _auth = AuthService();
   final _registerFormKey = GlobalKey<FormState>();
 
+  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
@@ -98,10 +99,10 @@ class _RegisterState extends ConsumerState<Register> {
                               });
                         } else {
                           AuthenticatedUser user = AuthenticatedUser(
-                              email: _emailController.text,
-                              firstName: _nameController.text,
-                              uid: result.uid,
-                              payers: <String>[]);
+                            email: _emailController.text,
+                            firstName: _nameController.text,
+                            uid: result.uid,
+                          );
 
                           ref.read(databaseProvider).addUser(user);
                         }
