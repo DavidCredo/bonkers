@@ -100,6 +100,7 @@ class _EditBonItemDialogState extends ConsumerState<EditBonItemDialog> {
             } else {
               bonItemController.updateBonItemLocally(bonItems!, index,
                   _itemTitleController.text, _itemPriceController.text);
+              Navigator.of(context).pop();
             }
           }),
           child: const Text("Speichern"),
