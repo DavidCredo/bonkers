@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bonkers/views/helpers/payer_list_widget.dart';
 import 'package:exif/exif.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -46,53 +47,65 @@ class _SplitBonState extends State<SplitBon> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        // TODO: Save und Discard Feature implementieren
         appBar: AppBar(
           title: Wrap(
               children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
         ),
-        body: SizedBox(
-            height: _width != null && _height != null
-                ? (MediaQuery.of(context).size.width / _width! * _height!)
-                : MediaQuery.of(context).size.height,
-            width: _width != null && _height != null
-                ? (MediaQuery.of(context).size.height / _height! * _width!)
-                : MediaQuery.of(context).size.width,
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                if (_strippedImage != null) Image.file(_strippedImage!),
-                if (_text != null &&
-                    _imageSize != null &&
-                    _imageRotation != null)
-                  Consumer(builder: (_, WidgetRef ref, __) {
-                    bool showOverlay =
-                        ref.watch(visiblityNotifierProvider).showOverlay;
-                    return Visibility(
-                      visible: showOverlay,
-                      maintainSize: true,
-                      maintainAnimation: true,
-                      maintainInteractivity: true,
-                      maintainState: true,
-                      child: CanvasTouchDetector(
-                        builder: (context) => CustomPaint(
-                            painter: TextRecognizerPainter(_text!, _imageSize!,
-                                _imageRotation!, context, ref)),
-                        gesturesToOverride: const [
-                          GestureType.onTapDown,
-                          GestureType.onTapUp,
-                          GestureType.onLongPressStart,
-                          GestureType.onLongPressEnd,
-                          GestureType.onLongPressMoveUpdate
-                        ],
-                      ),
-                    );
-                  }),
-
-                if (_text == null)
-                  const Text(
-                      'Leider konnte auf deinem Bild kein Text erkannt werden.') // TODO: schöneres Feedback und Möglichkeit direkt ein neues Bild aufzunehmen / zu wählen.,
-              ],
-            )));
+        body: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+                height: _width != null && _height != null
+                    ? (MediaQuery.of(context).size.width / _width! * _height!)
+                    : MediaQuery.of(context).size.height,
+                width: _width != null && _height != null
+                    ? (MediaQuery.of(context).size.height / _height! * _width!)
+                    : MediaQuery.of(context).size.width,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[
+                    if (_strippedImage != null) Image.file(_strippedImage!),
+                    if (_text != null &&
+                        _imageSize != null &&
+                        _imageRotation != null)
+                      Consumer(builder: (_, WidgetRef ref, __) {
+                        bool showOverlay =
+                            ref.watch(visiblityNotifierProvider).showOverlay;
+                        return Visibility(
+                          visible: showOverlay,
+                          maintainSize: true,
+                          maintainAnimation: true,
+                          maintainInteractivity: true,
+                          maintainState: true,
+                          child: CanvasTouchDetector(
+                            builder: (context) => CustomPaint(
+                                painter: TextRecognizerPainter(
+                                    _text!,
+                                    _imageSize!,
+                                    _imageRotation!,
+                                    context,
+                                    ref)),
+                            gesturesToOverride: const [
+                              GestureType.onTapDown,
+                              GestureType.onTapUp,
+                              GestureType.onLongPressStart,
+                              GestureType.onLongPressEnd,
+                              GestureType.onLongPressMoveUpdate
+                            ],
+                          ),
+                        );
+                      }),
+                    if (_text == null)
+                      const Text(
+                          'Leider konnte auf deinem Bild kein Text erkannt werden.') // TODO: schöneres Feedback und Möglichkeit direkt ein neues Bild aufzunehmen / zu wählen.,,
+                  ],
+                )),
+            const Flexible(
+              child: PayerListWidget(),
+            )
+          ],
+        ));
   }
 
 // TODO: Logik auslagern!

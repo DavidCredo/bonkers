@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'dart:ui' as ui;
 import 'package:bonkers/models/bon_item.dart';
+import 'package:bonkers/models/user.dart';
+import 'package:bonkers/views/helpers/edit_bon_item_widget.dart';
 import 'package:bonkers/views/split_bon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -50,19 +52,13 @@ class TextRecognizerPainter extends CustomPainter {
     });
 
     Map<double, BonItem> entries = {};
+    List<BonItem> bonArticles = [];
 
     String? itemTitle;
     double? itemPrice;
 
     for (final textLine in recognizedText) {
       // create bon items for database
-      //TODO: um eine Zeile "zu weit". Koordinaten der darunterliegenden Zeile speichern (korrekte zusammengefügtes) Objekt von der TextLine dadrüber.
-      if (itemTitle != null && itemPrice != null) {
-        entries[translateY(textLine.boundingBox.center.dy, rotation, size,
-            absoluteImageSize)] = BonItem(price: itemPrice, title: itemTitle);
-        itemTitle = null;
-        itemPrice = null;
-      }
 
       bool isTitle(String text) {
         return RegExp('[A-Za-z]{3}').hasMatch(text);
@@ -76,6 +72,13 @@ class TextRecognizerPainter extends CustomPainter {
         itemTitle = textLine.text;
       } else if (isPrice(textLine.text)) {
         itemPrice = double.tryParse(textLine.text);
+      }
+
+      if (itemTitle != null && itemPrice != null) {
+        entries[translateY(textLine.boundingBox.center.dy, rotation, size,
+            absoluteImageSize)] = BonItem(price: itemPrice, title: itemTitle);
+        itemTitle = null;
+        itemPrice = null;
       }
 
       // paint bon items for interaction:
@@ -107,11 +110,23 @@ class TextRecognizerPainter extends CustomPainter {
         entries.forEach((key, value) {
           if (key < bottom && key > top) {
             print({value.title, value.price});
+
+            if (value.payer == null) {
+              // value.payer = ref.read(payerNotifierProvider).selectedPayer.name;
+              // paint.color = ref.read(payerNotifierProvider).selectedPayer.color;
+              paint.color = const Color.fromARGB(255, 166, 12, 12);
+            } else {
+              value.payer = null;
+              paint.color = const Color.fromARGB(255, 255, 255, 255);
+            }
           }
         });
       }, onLongPressStart: (tapDetail) {
         // TODO: unsauber, onTap wird auch bei longpress aufgerufen
-        print("longpress action");
+        showDialog(
+          context: context,
+          builder: (context) => EditBonItemDialog(bon: bonArticles, index: 2),
+        );
       });
 
       canvas.drawParagraph(
@@ -122,10 +137,18 @@ class TextRecognizerPainter extends CustomPainter {
         Offset(left, top),
       );
     }
+
+    entries.forEach((key, value) => bonArticles.add(value));
+    // bonArticles.forEach((element) {
+    //   print(element.toJson());
+    // });
+
+    // final Bon newBon = Bon.createBonFromScan(bonTitle, bonArticles);
+    // bonServiceProvider.addBon(newBon);
   }
 
   @override
   bool shouldRepaint(TextRecognizerPainter oldDelegate) {
-    return false;
+    return oldDelegate.recognizedText != recognizedText;
   }
 }
