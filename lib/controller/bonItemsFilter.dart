@@ -4,10 +4,10 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 
 import '../models/BonItemsToPaint.dart';
 
-// filter for all blocks, which represent the collection of items of the shopping receipt
-
 List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
   if (recognizedText == null) return null;
+
+  // --- filter for all blocks, which represent the collection of items of the shopping receipt ---
 
   List<TextLine> allLines = [];
   List<TextLine> treatedLines = [];
@@ -101,6 +101,8 @@ List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
       }
     }
   }
+
+  // --- generate pairs of title and price, also include information for the painter ---
 
   List<BonItemsToPaint> rects = [];
   RectInfo? itemTitle;

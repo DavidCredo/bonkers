@@ -4,8 +4,8 @@ class BonItemsToPaint {
   BonItemsToPaint(this.rectList, this.color, this.payer);
 
   final Map<String, RectInfo> rectList;
-  final Color color;
-  final String? payer;
+  Color color; // changes accoring to the ownership (payer)
+  String? payer; // to be set by the user
 }
 
 class RectInfo {
@@ -14,5 +14,5 @@ class RectInfo {
   final double top;
   final double right;
   final double bottom;
-  String content;
+  String content; // to be manipulated (corrected) by the user
 }

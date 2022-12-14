@@ -49,6 +49,7 @@ class TextRecognizerPainter extends CustomPainter {
 
     // paint individual rectangles
     for (final item in bonRects) {
+      // translate values to canvas
       item.rectList.forEach((key, value) {
         final left = translateX(value.left, rotation, size, absoluteImageSize);
         final top = translateY(value.top, rotation, size, absoluteImageSize);
@@ -76,22 +77,15 @@ class TextRecognizerPainter extends CustomPainter {
             Paint()
               ..color = item.color
               ..style = PaintingStyle.fill, onTapDown: (tapDetail) {
-          // entries.forEach((key, value) {
-          //   if (key < bottom && key > top) {
-          //     print({value.title, value.price, value.payer, paint.color});
-
-          //     if (value.payer == null) {
-          //       value.payer =
-          //           ref.read(payerNotifierProvider).selectedPayer.name;
-          //       paint.color =
-          //           ref.read(payerNotifierProvider).selectedPayer.color;
-          //     } else {
-          //       value.payer = null;
-          //       paint.color = const Color.fromARGB(255, 255, 255, 255);
-          //     }
-          //   }
-          //
-          // });
+          if (item.payer == null ||
+              item.payer !=
+                  ref.read(payerNotifierProvider).selectedPayer.name) {
+            item.payer = ref.read(payerNotifierProvider).selectedPayer.name;
+            item.color = ref.read(payerNotifierProvider).selectedPayer.color;
+          } else {
+            item.payer = null;
+            item.color = const Color.fromARGB(255, 255, 255, 255);
+          }
         }, onLongPressStart: (tapDetail) {
           // TODO: unsauber, onTap wird auch bei longpress aufgerufen
           // showDialog(
@@ -111,7 +105,8 @@ class TextRecognizerPainter extends CustomPainter {
     }
 
     // create list of bon items (for database)
-    // TODO:erst beim Klick auf Speichern ausführen -> jedes rect-Objekt durchgehen und bei den "rectList"s die values "title" und "price" nehmen, dessen "content"s bilden den Kassenbon
+    // TODO:erst beim Klick auf Speichern ausführen -> jedes bonRects-Objekt durchgehen und bei den "rectList"s die values "title" und "price" nehmen, dessen "content"s bilden den Kassenbon
+    // TODO: in Splitbon auslagern, sofern sich der painter und Splitbon tatsächlich dieselbe Instanz von bonRects teilen.
 
     // final Bon newBon = Bon.createBonFromScan(bonTitle, bonArticles);
     // bonServiceProvider.addBon(newBon);
@@ -119,6 +114,6 @@ class TextRecognizerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(TextRecognizerPainter oldDelegate) {
-    return oldDelegate.entries != entries;
+    return oldDelegate.bonRects != bonRects;
   }
 }
