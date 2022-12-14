@@ -199,9 +199,13 @@ class _SplitBonState extends ConsumerState<SplitBon> {
             ? InputImageRotation.rotation90deg
             : InputImageRotation.rotation0deg;
       } else if (imageHeight < imageWidth) {
-        return InputImageRotation.rotation0deg;
+        return Platform.isIOS
+            ? InputImageRotation.rotation0deg
+            : InputImageRotation.rotation90deg;
       } else if (imageHeight > imageWidth) {
-        return InputImageRotation.rotation90deg;
+        return Platform.isIOS
+            ? InputImageRotation.rotation90deg
+            : InputImageRotation.rotation0deg;
       } else {
         // if in doubt or square, the function still needs this information. In most cases its 90 degrees
         return InputImageRotation.rotation90deg;
