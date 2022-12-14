@@ -28,7 +28,7 @@ class _SplitBonState extends State<SplitBon> {
   bool _isBusy = false;
   List<BonItemsToPaint>? _bonItemsData;
   String? bonTitle;
-  File? _image;
+  File? _strippedImage;
   Size? _imageSize;
   InputImageRotation? _imageRotation;
   double? _width;
@@ -70,7 +70,7 @@ class _SplitBonState extends State<SplitBon> {
           actions: [
             TextButton(
                 onPressed: (() async {
-                  // TODO: Hier Datenbankaufruf zum Speichern des Bons. Wichtig => Await nutzen. 
+                  // TODO: Hier Datenbankaufruf zum Speichern des Bons. Wichtig => Await nutzen.
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: ((context) => const Wrapper())));
                 }),
@@ -92,7 +92,7 @@ class _SplitBonState extends State<SplitBon> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    if (_image != null) Image.file(_image!),
+                    if (_strippedImage != null) Image.file(_strippedImage!),
                     if (_bonItemsData != null &&
                         _imageSize != null &&
                         _imageRotation != null)
@@ -146,7 +146,7 @@ class _SplitBonState extends State<SplitBon> {
     await FlutterImageCompress.compressAndGetFile(path, strippedPath);
 
     setState(() {
-      Platform.isIOS ? _image = File(strippedPath) : File(path);
+      _strippedImage = File(strippedPath);
     });
 
     // image with exif data (needed for orientation information)
@@ -154,7 +154,7 @@ class _SplitBonState extends State<SplitBon> {
     final exifData = await readExifFromBytes(bytes);
 
     // image with stripped exif data
-    final Uint8List strippedBytes = await _image!.readAsBytes();
+    final Uint8List strippedBytes = await _strippedImage!.readAsBytes();
     final decodedImage = await decodeImageFromList(strippedBytes);
     final imageWidth = decodedImage.width.toDouble();
     final imageHeight = decodedImage.height.toDouble();
@@ -168,9 +168,13 @@ class _SplitBonState extends State<SplitBon> {
       } else if (orientation == "Rotated 180" && imageHeight < imageWidth) {
         return InputImageRotation.rotation180deg;
       } else if (orientation == "Rotated 90 CCW" && imageHeight > imageWidth) {
-        return InputImageRotation.rotation270deg;
+        return Platform.isIOS
+            ? InputImageRotation.rotation270deg
+            : InputImageRotation.rotation180deg;
       } else if (orientation == "Rotated 90 CW" && imageHeight > imageWidth) {
-        return InputImageRotation.rotation90deg;
+        return Platform.isIOS
+            ? InputImageRotation.rotation90deg
+            : InputImageRotation.rotation0deg;
       } else if (imageHeight < imageWidth) {
         return InputImageRotation.rotation0deg;
       } else if (imageHeight > imageWidth) {
