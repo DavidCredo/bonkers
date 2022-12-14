@@ -10,7 +10,6 @@ import 'package:touchable/touchable.dart';
 import '../controller/bonItemsFilter.dart';
 import '../controller/text_detector_painter.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-
 import '../controller/wrapper.dart';
 import '../models/BonItemsToPaint.dart';
 import '../models/bon.dart';
@@ -30,6 +29,7 @@ class _SplitBonState extends ConsumerState<SplitBon> {
   TextRecognizerPainter? _painterInstance;
   bool _canProcess = true;
   bool _isBusy = false;
+  bool _recognitionSuccessful = true;
   String? _bonTitle;
   List<BonItemsToPaint>? _bonItemsData;
   File? _strippedImage;
@@ -101,6 +101,7 @@ class _SplitBonState extends ConsumerState<SplitBon> {
         body: Column(
           children: [
             SizedBox(
+                // display the image in maximal display size while retaining the proportions
                 height: _width != null && _height != null
                     ? (MediaQuery.of(context).size.width / _width! * _height!)
                     : MediaQuery.of(context).size.height,
@@ -110,7 +111,12 @@ class _SplitBonState extends ConsumerState<SplitBon> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    if (_strippedImage != null) Image.file(_strippedImage!),
+                    if (_strippedImage != null)
+                      Image.file(_strippedImage!)
+                    else
+                      const Center(
+                        child: CircularProgressIndicator(),
+                      ),
                     if (_bonItemsData != null &&
                         _imageSize != null &&
                         _imageRotation != null)
@@ -142,7 +148,7 @@ class _SplitBonState extends ConsumerState<SplitBon> {
                           ),
                         );
                       }),
-                    if (_bonItemsData == null)
+                    if (!_recognitionSuccessful)
                       //TODO: Ladeanimation und nicht den Text anzeigen, solange das Bild verarebitet wird.
                       const Text(
                           'Leider konnte auf deinem Bild kein Text erkannt werden.') // TODO: schöneres Feedback und Möglichkeit direkt ein neues Bild aufzunehmen / zu wählen.,,
@@ -200,8 +206,9 @@ class _SplitBonState extends ConsumerState<SplitBon> {
       } else if (imageHeight > imageWidth) {
         return InputImageRotation.rotation90deg;
       } else {
+        // if in doubt or square, the function still needs this information. In most cases its 90 degrees
         return InputImageRotation.rotation90deg;
-      } // if in doubt or square, the function still needs this information. In most cases its 90 degrees
+      }
     }
 
     final inputImage = InputImage.fromFilePath(strippedPath);
@@ -221,6 +228,7 @@ class _SplitBonState extends ConsumerState<SplitBon> {
     final recognizedText = await _textRecognizer.processImage(inputImage);
     _bonTitle = recognizedText.blocks.first.lines.first.text;
     _bonItemsData = itemsFilter(recognizedText);
+    if (_bonItemsData == null) _recognitionSuccessful = false;
     _isBusy = false;
     if (mounted) {
       setState(() {});
