@@ -13,21 +13,25 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import '../controller/wrapper.dart';
 import '../models/BonItemsToPaint.dart';
+import '../models/bon.dart';
+import '../models/bon_item.dart';
+import '../services/bon_service.dart';
 
-class SplitBon extends StatefulWidget {
+class SplitBon extends ConsumerStatefulWidget {
   const SplitBon({super.key, required this.pickedFile});
   final XFile pickedFile;
 
   @override
-  State<SplitBon> createState() => _SplitBonState();
+  ConsumerState<SplitBon> createState() => _SplitBonState();
 }
 
-class _SplitBonState extends State<SplitBon> {
+class _SplitBonState extends ConsumerState<SplitBon> {
   final TextRecognizer _textRecognizer = TextRecognizer();
+  TextRecognizerPainter? _painterInstance;
   bool _canProcess = true;
   bool _isBusy = false;
+  String? _bonTitle;
   List<BonItemsToPaint>? _bonItemsData;
-  String? bonTitle;
   File? _strippedImage;
   Size? _imageSize;
   InputImageRotation? _imageRotation;
@@ -69,8 +73,22 @@ class _SplitBonState extends State<SplitBon> {
                   ))),
           actions: [
             TextButton(
-                onPressed: (() async {
-                  // TODO: Hier Datenbankaufruf zum Speichern des Bons. Wichtig => Await nutzen.
+                onPressed: (() {
+                  // create list of bon items (for database)
+                  if (_painterInstance != null) {
+                    final List<BonItem> bonItems = [];
+                    for (final item in _painterInstance!.bonRects) {
+                      // at this point, the value for key "price" must be a double, previous checks will handle
+                      bonItems.add(BonItem(
+                          price: double.parse(item.rectList["price"]!.content),
+                          title: item.rectList["title"]!.content,
+                          payer: item.payer));
+                    }
+                    final Bon newBon =
+                        Bon.createBonFromScan(_bonTitle!, bonItems);
+                    ref.read(bonServiceProvider).addBon(newBon);
+                  }
+
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: ((context) => const Wrapper())));
                 }),
@@ -107,12 +125,13 @@ class _SplitBonState extends State<SplitBon> {
                           maintainState: true,
                           child: CanvasTouchDetector(
                             builder: (context) => CustomPaint(
-                                painter: TextRecognizerPainter(
-                                    _bonItemsData!,
-                                    _imageSize!,
-                                    _imageRotation!,
-                                    context,
-                                    ref)),
+                                painter: _painterInstance =
+                                    TextRecognizerPainter(
+                                        _bonItemsData!,
+                                        _imageSize!,
+                                        _imageRotation!,
+                                        context,
+                                        ref)),
                             gesturesToOverride: const [
                               GestureType.onTapDown,
                               GestureType.onTapUp,
@@ -124,6 +143,7 @@ class _SplitBonState extends State<SplitBon> {
                         );
                       }),
                     if (_bonItemsData == null)
+                      //TODO: Ladeanimation und nicht den Text anzeigen, solange das Bild verarebitet wird.
                       const Text(
                           'Leider konnte auf deinem Bild kein Text erkannt werden.') // TODO: schöneres Feedback und Möglichkeit direkt ein neues Bild aufzunehmen / zu wählen.,,
                   ],
@@ -199,7 +219,7 @@ class _SplitBonState extends State<SplitBon> {
     if (_isBusy) return;
     _isBusy = true;
     final recognizedText = await _textRecognizer.processImage(inputImage);
-    bonTitle = recognizedText.blocks.first.lines.first.text;
+    _bonTitle = recognizedText.blocks.first.lines.first.text;
     _bonItemsData = itemsFilter(recognizedText);
     _isBusy = false;
     if (mounted) {
@@ -208,7 +228,6 @@ class _SplitBonState extends State<SplitBon> {
   }
 }
 
-//TODO: in eigene Datei auslagern
 class VisibilityNotifier extends ChangeNotifier {
   bool showOverlay = true;
 
