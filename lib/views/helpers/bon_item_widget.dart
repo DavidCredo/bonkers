@@ -22,6 +22,11 @@ class AllBonsListTile extends ConsumerWidget {
         title: Text(bon.title),
         subtitle: Text("Hinzugefügt am: $formattedTime"),
         trailing: Text("Summe: $sum"),
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return BonDetailView(bon: bon);
+          }));
+        },
         onLongPress: () => showDialog(
             context: context,
             builder: ((context) => AlertDialog(
