@@ -35,9 +35,7 @@ class _PayerListWidgetState extends ConsumerState<PayerListWidget> {
                       textColor: Colors.white,
                       shape: const CircleBorder(
                           side: BorderSide(
-                              width: 1,
-                              color: Colors.green,
-                              style: BorderStyle.solid)),
+                              color: Colors.green, style: BorderStyle.solid)),
                       onPressed: (() {
                         showDialog(
                             context: context,
@@ -185,11 +183,10 @@ class PayerDialogController {
 }
 
 class SelectedColorNotifier extends ChangeNotifier {
-  Color selectedColor = Color(124124);
+  Color selectedColor = Color.fromARGB(100, 100, 100, 100);
 
   void changeColor(Color newColor) {
     selectedColor = newColor;
-    print(selectedColor);
     notifyListeners();
   }
 }

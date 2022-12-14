@@ -11,6 +11,8 @@ import '../controller/bonItemsFilter.dart';
 import '../controller/text_detector_painter.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
+import '../controller/wrapper.dart';
+
 class SplitBon extends StatefulWidget {
   const SplitBon({super.key, required this.pickedFile});
   final XFile pickedFile;
@@ -48,11 +50,35 @@ class _SplitBonState extends State<SplitBon> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          leadingWidth: 60,
           title: Wrap(
               children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
+          centerTitle: true,
+          leading: Builder(
+              builder: ((context) => IconButton(
+                    onPressed: (() {
+                      Navigator.of(context).pop();
+                    }),
+                    icon: const Text(
+                      "Zurück",
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  ))),
+          actions: [
+            TextButton(
+                onPressed: (() async {
+                  // TODO: Hier Datenbankaufruf zum Speichern des Bons. Wichtig => Await nutzen. 
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: ((context) => const Wrapper())));
+                }),
+                child: const Text(
+                  "Speichern",
+                  style: TextStyle(color: Colors.white),
+                ))
+          ],
         ),
         body: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
                 height: _width != null && _height != null

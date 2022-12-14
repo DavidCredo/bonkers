@@ -25,7 +25,6 @@ final userCollectionProvider =
     return const Stream.empty();
   }
 });
-// TODO: Refactoring needed? Type safety is ok, but there's probably a better way.
 final userBonsCollectionProvider = StreamProvider.autoDispose<List<Bon>>((ref) {
   final userStream = ref.watch(authStateChangesProvider);
 
