@@ -150,8 +150,11 @@ class _SplitBonState extends ConsumerState<SplitBon> {
                   ],
                 )),
             if (!_recognitionSuccessful)
-              const Text(
-                  'Leider konnten auf deinem Bild keine Artikel eines Kassenbons erkannt werden. Versuche insbesondere darauf zu achten, dass der gesamte Bon auf deinem Bild zu sehen ist und Du dein Foto möglichst parallel und gerade zum Kassenbon schießt.')
+              const Padding(
+                padding: EdgeInsets.all(30),
+                child: Text(
+                    'Leider konnten auf deinem Bild keine Artikel eines Kassenbons erkannt werden. Versuche insbesondere darauf zu achten, dass der gesamte Bon auf deinem Bild zu sehen ist und Du dein Foto möglichst parallel und gerade zum Kassenbon schießt.'),
+              )
             else
               const Flexible(
                 child: PayerListWidget(),
@@ -160,7 +163,8 @@ class _SplitBonState extends ConsumerState<SplitBon> {
         ));
   }
 
-// TODO: Logik auslagern!
+// --- file specific imageprocessing ---
+
   Future _processPickedFile(XFile? pickedFile) async {
     final path = pickedFile?.path;
     final strippedPath = '${path}_compressed.jpg';
@@ -228,8 +232,10 @@ class _SplitBonState extends ConsumerState<SplitBon> {
     if (_isBusy) return;
     _isBusy = true;
     final recognizedText = await _textRecognizer.processImage(inputImage);
-    _bonTitle = recognizedText.blocks.first.lines.first.text;
-    _bonItemsData = itemsFilter(recognizedText);
+    if (recognizedText.text != "") {
+      _bonTitle = recognizedText.blocks.first.lines.first.text;
+      _bonItemsData = itemsFilter(recognizedText);
+    }
     if (_bonItemsData == null) _recognitionSuccessful = false;
     _isBusy = false;
     if (mounted) {
@@ -238,6 +244,7 @@ class _SplitBonState extends ConsumerState<SplitBon> {
   }
 }
 
+// --- file specific Notifier ---
 class VisibilityNotifier extends ChangeNotifier {
   bool showOverlay = true;
 
