@@ -24,59 +24,96 @@ class _PayerListWidgetState extends ConsumerState<PayerListWidget> {
   Widget build(BuildContext context) {
     final userDocReference = ref.watch(userCollectionProvider);
     return userDocReference.when(
-        data: (user) => ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemBuilder: ((context, index) {
-              if (index == user.payers!.length || user.payers == null) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: MaterialButton(
-                      color: Colors.green,
-                      textColor: Colors.white,
-                      shape: const CircleBorder(
-                          side: BorderSide(
-                              color: Colors.green, style: BorderStyle.solid)),
-                      onPressed: (() {
-                        showDialog(
-                            context: context,
-                            builder: ((BuildContext context) {
-                              return const AddPayerDialog();
-                            }));
-                      }),
-                      child: const Icon(Icons.add)),
-                );
-              }
-              return Padding(
-                padding: const EdgeInsets.all(4),
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.2,
-                  child: MaterialButton(
-                      color: user.payers![index].color,
-                      textColor: Colors.white,
-                      shape: CircleBorder(
-                          side: BorderSide(
-                              width: 1,
-                              color: user.payers![index].color,
-                              style: BorderStyle.solid)),
-                      onPressed: (() {
-                        // TODO: Feedback welcher Payer ausgewählt ist.
-                        ref
-                            .read(payerNotifierProvider)
-                            .updatePayer(user.payers![index]);
-                      }),
-                      onLongPress: () {
-                        showGeneralDialog(
-                          context: context,
-                          pageBuilder:
-                              (context, animation, secondaryAnimation) =>
-                                  DeletePayerDialog(index: index),
-                        );
-                      },
-                      child: Text(user.payers![index].name)),
+        data: (user) => Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Aktueller Teilnehmer: ${ref.watch(payerNotifierProvider).selectedPayer.name}",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.06,
+                              color: ref
+                                  .watch(payerNotifierProvider)
+                                  .selectedPayer
+                                  .color),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              );
-            }),
-            itemCount: user.payers!.length + 1),
+                Expanded(
+                  flex: 10,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: ((context, index) {
+                        if (index == user.payers!.length ||
+                            user.payers == null) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: MaterialButton(
+                                color: Colors.green,
+                                textColor: Colors.white,
+                                shape: const CircleBorder(
+                                    side: BorderSide(
+                                        color: Colors.green,
+                                        style: BorderStyle.solid)),
+                                onPressed: (() {
+                                  showDialog(
+                                      context: context,
+                                      builder: ((BuildContext context) {
+                                        return const AddPayerDialog();
+                                      }));
+                                }),
+                                child: const Icon(Icons.add)),
+                          );
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.22,
+                            child: MaterialButton(
+                                color: user.payers![index].color,
+                                textColor: Colors.white,
+                                shape: CircleBorder(
+                                    side: BorderSide(
+                                        width: 1,
+                                        color: user.payers![index].color,
+                                        style: BorderStyle.solid)),
+                                onPressed: (() {
+                                  // TODO: Feedback welcher Payer ausgewählt ist.
+                                  ref
+                                      .read(payerNotifierProvider)
+                                      .updatePayer(user.payers![index]);
+                                }),
+                                onLongPress: () {
+                                  showGeneralDialog(
+                                    context: context,
+                                    pageBuilder: (context, animation,
+                                            secondaryAnimation) =>
+                                        DeletePayerDialog(index: index),
+                                  );
+                                },
+                                child: Text(
+                                  user.payers![index].name,
+                                  style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.04),
+                                )),
+                          ),
+                        );
+                      }),
+                      itemCount: user.payers!.length + 1),
+                ),
+              ],
+            ),
         error: (error, stackTrace) => Center(
               child: Text(error.toString()),
             ),
