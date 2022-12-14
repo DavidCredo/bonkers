@@ -77,10 +77,10 @@ class TextRecognizerPainter extends CustomPainter {
             Rect.fromLTRB(left, top, right, bottom),
             Paint()
               ..color = item.color
-              ..style = PaintingStyle.fill, onTapDown: (tapDetail) {
-          if (item.payer == null ||
-              item.payer !=
-                  ref.read(payerNotifierProvider).selectedPayer.name) {
+              ..style = PaintingStyle.fill, onTapUp: (tapDetail) {
+          if (item.payer !=
+                  ref.read(payerNotifierProvider).selectedPayer.name &&
+              ref.read(payerNotifierProvider).selectedPayer.name != "Niemand") {
             item.payer = ref.read(payerNotifierProvider).selectedPayer.name;
             item.color = ref.read(payerNotifierProvider).selectedPayer.color;
           } else {
@@ -89,7 +89,6 @@ class TextRecognizerPainter extends CustomPainter {
           }
           ref.read(shouldRepaintProvider).triggerRepaint();
         }, onLongPressStart: (tapDetail) {
-          // TODO: unsauber, onTap wird auch bei longpress aufgerufen
           showDialog(
             context: context,
             builder: (context) => EditLocalBonItemDialog(bonItem: item),
