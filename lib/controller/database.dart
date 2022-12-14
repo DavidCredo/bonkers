@@ -57,6 +57,10 @@ class DatabaseService {
     await db.doc(user.uid).collection("Bons").doc(bon.uid).set(bon.toJson());
   }
 
+  Future deleteBon(User user, Bon bon) async {
+    await db.doc(user.uid).collection("Bons").doc(bon.uid).delete();
+  }
+
   Future updateBon(User user, Bon bon) async {
     List<Map<String, dynamic>> changedItems =
         bon.articles.map((article) => article.toJson()).toList();

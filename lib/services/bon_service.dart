@@ -28,6 +28,15 @@ class BonService {
       return e.toString();
     }
   }
+
+  Future deleteBon(Bon bon) async {
+    final user = ref.read(authStateChangesProvider).value;
+    try {
+      await ref.read(databaseProvider).deleteBon(user!, bon);
+    } catch (e) {
+      return e.toString();
+    }
+  }
 }
 
 final bonServiceProvider = Provider<BonService>((ref) {
