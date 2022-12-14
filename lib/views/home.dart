@@ -22,13 +22,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
     _imagePicker = ImagePicker();
     super.initState();
   }
-
+// TODO: Back navigation unterbinden
   @override
   Widget build(BuildContext context) {
     final isDarkModeEnabled =
         ref.watch(themeNotifierProvider).isDarkModeEnabled;
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
               onPressed: ((() {

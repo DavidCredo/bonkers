@@ -61,11 +61,11 @@ class _EditBonItemDialogState extends ConsumerState<EditBonItemDialog> {
       ),
       content: Form(
         key: _formKey,
-        child: Row(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              flex: 2,
+            Flexible(
+              flex: 1,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
@@ -75,7 +75,7 @@ class _EditBonItemDialogState extends ConsumerState<EditBonItemDialog> {
                 ),
               ),
             ),
-            Expanded(
+            Flexible(
                 flex: 1,
                 child: TextFormField(
                   controller: _itemPriceController,
@@ -93,6 +93,7 @@ class _EditBonItemDialogState extends ConsumerState<EditBonItemDialog> {
         ),
         TextButton(
           onPressed: (() {
+            // TODO: Validator Logik für alle Dialoge
             if (widget.bon != null) {
               bonItemController.updateBonItemInDB(bon!, index,
                   _itemTitleController.text, _itemPriceController.text);
