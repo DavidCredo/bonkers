@@ -1,8 +1,12 @@
+import 'dart:ui';
+
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+
+import '../models/BonItemsToPaint.dart';
 
 // filter for all blocks, which represent the collection of items of the shopping receipt
 
-List<TextLine>? itemsFilter(RecognizedText? recognizedText) {
+List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
   if (recognizedText == null) return null;
 
   List<TextLine> allLines = [];
@@ -61,11 +65,11 @@ List<TextLine>? itemsFilter(RecognizedText? recognizedText) {
       return double.tryParse(treatPrice(candidate));
     }
 
-    bool isName(String text) {
+    bool isTitle(String text) {
       return RegExp('[A-Za-z]{3}').hasMatch(text);
     }
 
-    bool isAmount(String text) {
+    bool isPrice(String text) {
       return parseDouble(text) != null;
     }
 
@@ -73,7 +77,7 @@ List<TextLine>? itemsFilter(RecognizedText? recognizedText) {
       return parseInt(text) != null;
     }
 
-    if (isName(textLine.text)) {
+    if (isTitle(textLine.text)) {
       if (!textLine.text.toLowerCase().contains("stk")) {
         treatedLines.add(TextLine(
             text: treatItem(textLine.text),
@@ -85,7 +89,7 @@ List<TextLine>? itemsFilter(RecognizedText? recognizedText) {
     } else if (isItemCount(textLine.text)) {
       // is discarded and must be tested first, since any int can be converted to a double.
       continue;
-    } else if (isAmount(textLine.text)) {
+    } else if (isPrice(textLine.text)) {
       // filter for unit counts
       if (!textLine.text.toLowerCase().contains("x")) {
         treatedLines.add(TextLine(
@@ -98,5 +102,45 @@ List<TextLine>? itemsFilter(RecognizedText? recognizedText) {
     }
   }
 
-  return treatedLines;
+  List<BonItemsToPaint> rects = [];
+  RectInfo? itemTitle;
+  RectInfo? itemPrice;
+  Color defaultColor = const Color.fromARGB(255, 255, 255, 255);
+
+  for (final textLine in treatedLines) {
+    // create list of rectangles (for controlled painting)
+
+    bool isTitle(String text) {
+      return RegExp('[A-Za-z]{3}').hasMatch(text);
+    }
+
+    bool isPrice(String text) {
+      return double.tryParse(text) != null;
+    }
+
+    if (isTitle(textLine.text)) {
+      itemTitle = RectInfo(
+          textLine.boundingBox.left,
+          textLine.boundingBox.top,
+          textLine.boundingBox.right,
+          textLine.boundingBox.bottom,
+          textLine.text);
+    } else if (isPrice(textLine.text)) {
+      itemPrice = RectInfo(
+          textLine.boundingBox.left,
+          textLine.boundingBox.top,
+          textLine.boundingBox.right,
+          textLine.boundingBox.bottom,
+          textLine.text);
+    }
+
+    if (itemTitle != null && itemPrice != null) {
+      rects.add(BonItemsToPaint(
+          {"title": itemTitle, "price": itemPrice}, defaultColor, null));
+      itemTitle = null;
+      itemPrice = null;
+    }
+  }
+
+  return rects;
 }

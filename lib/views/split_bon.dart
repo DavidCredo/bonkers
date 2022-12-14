@@ -11,6 +11,8 @@ import '../controller/bonItemsFilter.dart';
 import '../controller/text_detector_painter.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
+import '../models/BonItemsToPaint.dart';
+
 class SplitBon extends StatefulWidget {
   const SplitBon({super.key, required this.pickedFile});
   final XFile pickedFile;
@@ -23,7 +25,7 @@ class _SplitBonState extends State<SplitBon> {
   final TextRecognizer _textRecognizer = TextRecognizer();
   bool _canProcess = true;
   bool _isBusy = false;
-  List<TextLine>? _text;
+  List<BonItemsToPaint>? _text;
   String? bonTitle;
   File? _strippedImage;
   Size? _imageSize;
@@ -132,6 +134,7 @@ class _SplitBonState extends State<SplitBon> {
     final imageWidth = decodedImage.width.toDouble();
     final imageHeight = decodedImage.height.toDouble();
 
+    //TODO: CRITICAL: Exception, when no exifData is present in picture
     getImageRotation() {
       final orientation = exifData['Image Orientation']!.printable;
 

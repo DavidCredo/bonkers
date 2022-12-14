@@ -1,9 +1,12 @@
+import 'dart:ui';
+
 class BonItem {
-  BonItem({required this.price, required this.title, this.payer});
+  BonItem({required this.price, required this.title, this.payer, this.color});
 
   double price;
   String title;
   String? payer;
+  Color? color;
 
   factory BonItem.fromJson(Map<String, dynamic> data) {
     final price = data["price"] as double;
