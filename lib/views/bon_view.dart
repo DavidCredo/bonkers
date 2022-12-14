@@ -1,3 +1,4 @@
+import 'package:bonkers/controller/database.dart';
 import 'package:bonkers/models/bon.dart';
 import 'package:bonkers/models/user.dart';
 import 'package:bonkers/services/bon_service.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../models/bon_item.dart';
+import '../models/payer.dart';
 
 class SingleBonListView extends ConsumerWidget {
   const SingleBonListView({super.key, required this.bonId});
@@ -60,13 +62,18 @@ class _BonItemTileState extends ConsumerState<BonItemTile> {
     final bonItem = widget.bonItem;
     final selectedPayer = ref.watch(payerNotifierProvider).selectedPayer;
     final bon = ref.watch(bonStreamProvider(widget.bonId)).value;
+    final price =
+        NumberFormat.currency(locale: 'eu', symbol: '€').format(bonItem.price);
 
     return ListTile(
       title: Text(bonItem.title),
-      subtitle: Text("Preis: " +
-          NumberFormat.currency(locale: 'eu', symbol: '€')
-              .format(bonItem.price)),
-      trailing: Text(bonItem.payer ?? "Niemand"),
+      subtitle: Text(
+        "Preis: $price",
+      ),
+      trailing: Text(
+        bonItem.payer ?? "Niemand",
+        style: TextStyle(color: Colors.black),
+      ),
       onTap: () {
         final newBonItem = bonItem.copyWith(payer: selectedPayer.name);
         final newBon = bon!.updateBonItem(bon, widget.index, newBonItem);
@@ -80,4 +87,15 @@ class _BonItemTileState extends ConsumerState<BonItemTile> {
       },
     );
   }
+
+  // Color getPayerColorIfMatching(String payerName) {
+  //   final userCollection = ref.watch(userCollectionProvider);
+  //   final payerList = userCollection.value!.payers;
+  //   for (Payer payer in payerList!) {
+  //     if (payer.name == payerName) {
+  //       return payer.color;
+  //     }
+  //   }
+  //   return Colors.black;
+  // }
 }

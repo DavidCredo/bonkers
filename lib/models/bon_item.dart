@@ -6,6 +6,7 @@ class BonItem {
   final double price;
   final String title;
   final String? payer;
+  Color? color;
 
   factory BonItem.fromJson(Map<String, dynamic> data) {
     final price = data["price"] as double;

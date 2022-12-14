@@ -51,12 +51,8 @@ final bonStreamProvider =
 
   if (user != null) {
     return ref.read(bonRepositoryProvider).getBon(uid: user.uid, bonUid: bonId);
+    
   } else {
     return const Stream.empty();
   }
 });
-
-class BonController extends StateNotifier<AsyncValue<void>> {
-  BonController({required this.bonService}) : super(const AsyncData(null));
-  final BonService bonService;
-}
