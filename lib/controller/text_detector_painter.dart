@@ -86,6 +86,7 @@ class TextRecognizerPainter extends CustomPainter {
             item.payer = null;
             item.color = const Color.fromARGB(255, 255, 255, 255);
           }
+          ref.read(shouldRepaintProvider).triggerRepaint();
         }, onLongPressStart: (tapDetail) {
           // TODO: unsauber, onTap wird auch bei longpress aufgerufen
           // showDialog(
@@ -101,6 +102,13 @@ class TextRecognizerPainter extends CustomPainter {
             )),
           Offset(left, top),
         );
+
+        // draw invisble rect, which is connected to a listener that is activated whenever the rectBons-Object might change to then trigger a repaint
+        canvas.drawRect(
+            const Rect.fromLTRB(0, 0, 0, 0),
+            Paint()
+              ..color = ref.watch(shouldRepaintProvider).color
+              ..style = PaintingStyle.fill);
       });
     }
 
@@ -114,6 +122,19 @@ class TextRecognizerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(TextRecognizerPainter oldDelegate) {
-    return oldDelegate.bonRects != bonRects;
+    return true;
   }
 }
+
+class shouldRepaintNotifier extends ChangeNotifier {
+  Color color = const Color(0x00000000);
+
+  void triggerRepaint() {
+    notifyListeners();
+  }
+}
+
+final shouldRepaintProvider =
+    ChangeNotifierProvider<shouldRepaintNotifier>((ref) {
+  return shouldRepaintNotifier();
+});
