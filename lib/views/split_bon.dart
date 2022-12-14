@@ -54,7 +54,6 @@ class _SplitBonState extends ConsumerState<SplitBon> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // TODO: Save und Discard Feature implementieren
         appBar: AppBar(
           leadingWidth: 60,
           title: Wrap(
@@ -149,9 +148,8 @@ class _SplitBonState extends ConsumerState<SplitBon> {
                         );
                       }),
                     if (!_recognitionSuccessful)
-                      //TODO: Ladeanimation und nicht den Text anzeigen, solange das Bild verarebitet wird.
                       const Text(
-                          'Leider konnte auf deinem Bild kein Text erkannt werden.') // TODO: schöneres Feedback und Möglichkeit direkt ein neues Bild aufzunehmen / zu wählen.,,
+                          'Leider konnten auf deinem Bild keine Artikel eines Kassenbons erkannt werden. Versuche insbesondere darauf zu achten, dass der gesamte Bon auf deinem Bild zu sehen ist und Du dein Foto möglichst parallel und gerade zum Kassenbon schießt.')
                   ],
                 )),
             const Flexible(
@@ -185,9 +183,8 @@ class _SplitBonState extends ConsumerState<SplitBon> {
     final imageWidth = decodedImage.width.toDouble();
     final imageHeight = decodedImage.height.toDouble();
 
-    //TODO: CRITICAL: Exception, when no exifData is present in picture
     getImageRotation() {
-      final orientation = exifData['Image Orientation']!.printable;
+      final orientation = exifData['Image Orientation']?.printable ?? "no info";
 
       if (orientation == "Horizontal (normal)" && imageHeight < imageWidth) {
         return InputImageRotation.rotation0deg;
