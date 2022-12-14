@@ -2,10 +2,11 @@ import 'package:bonkers/models/bon.dart';
 import 'package:bonkers/models/bon_item.dart';
 import 'package:bonkers/services/bon_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EditBonItemDialog extends ConsumerStatefulWidget {
-  final dynamic bon;
+  final Bon bon;
   final int index;
   const EditBonItemDialog({super.key, required this.bon, required this.index});
 
@@ -22,14 +23,9 @@ class _EditBonItemDialogState extends ConsumerState<EditBonItemDialog> {
   @override
   void initState() {
     super.initState();
-    if ((widget.bon.runtimeType) == Bon) {
-      _itemTitleController.text = widget.bon!.articles[widget.index].title;
-      _itemPriceController.text =
-          widget.bon!.articles[widget.index].price.toString();
-    } else if ((widget.bon.runtimeType) == List<BonItem>) {
-      _itemTitleController.text = widget.bon![widget.index].title;
-      _itemPriceController.text = widget.bon![widget.index].price.toString();
-    }
+    _itemTitleController.text = widget.bon.articles[widget.index].title;
+    _itemPriceController.text =
+        widget.bon.articles[widget.index].price.toString();
     bonItemController = BonItemController(ref: ref);
   }
 
@@ -60,6 +56,13 @@ class _EditBonItemDialogState extends ConsumerState<EditBonItemDialog> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Diese Feld darf nicht leer sein.";
+                    } else {
+                      return null;
+                    }
+                  },
                   controller: _itemTitleController,
                   decoration:
                       const InputDecoration(icon: Icon(Icons.description)),
@@ -69,6 +72,16 @@ class _EditBonItemDialogState extends ConsumerState<EditBonItemDialog> {
             Flexible(
                 flex: 1,
                 child: TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Dieses Feld darf nicht leer sein.";
+                    } else if (double.tryParse(value) == null) {
+                      return "Bitte gib eine Zahl ein.";
+                    } else {
+                      return null;
+                    }
+                  },
+                  keyboardType: TextInputType.number,
                   controller: _itemPriceController,
                   decoration: const InputDecoration(icon: Icon(Icons.euro)),
                 )),
@@ -84,13 +97,8 @@ class _EditBonItemDialogState extends ConsumerState<EditBonItemDialog> {
         ),
         TextButton(
           onPressed: (() {
-            // TODO: Validator Logik für alle Dialoge
-            if (widget.bon != null) {
-              bonItemController.updateBonItemInDB(bon!, index,
-                  _itemTitleController.text, _itemPriceController.text);
-              Navigator.of(context).pop();
-            } else {
-              bonItemController.updateBonItemLocally(bon!, index,
+            if (_formKey.currentState!.validate()) {
+              bonItemController.updateBonItem(bon, index,
                   _itemTitleController.text, _itemPriceController.text);
               Navigator.of(context).pop();
             }
@@ -106,7 +114,7 @@ class BonItemController {
   BonItemController({required this.ref});
   final WidgetRef ref;
 
-  void updateBonItemInDB(
+  void updateBonItem(
       Bon bon, int index, String userInputTitle, String userInputPrice) {
     final updatedBonItem = bon.articles[index].copyWith(
         price: double.tryParse(userInputPrice.replaceAll(',', '.')),
@@ -114,13 +122,5 @@ class BonItemController {
 
     final newBon = bon.updateBonItem(bon, index, updatedBonItem);
     ref.read(bonServiceProvider).updateBon(newBon);
-  }
-
-  void updateBonItemLocally(List<BonItem> articles, int index,
-      String userInputTitle, String userInputPrice) {
-    final updatedBonItem = articles[index].copyWith(
-        price: double.tryParse(userInputPrice.replaceAll(',', '.')),
-        title: userInputTitle);
-    articles[index] = updatedBonItem;
   }
 }

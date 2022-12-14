@@ -41,8 +41,15 @@ class _EditLocalBonItemDialogState
               Flexible(
                   flex: 2,
                   child: Padding(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Diese Feld darf nicht leer sein.";
+                        } else {
+                          return null;
+                        }
+                      },
                       controller: _itemTitleController,
                       decoration: const InputDecoration(
                         icon: Icon(Icons.description),
@@ -53,10 +60,19 @@ class _EditLocalBonItemDialogState
                   child: Padding(
                 padding: const EdgeInsets.all(8),
                 child: TextFormField(
-                    controller: _itemPriceController,
-                    decoration: const InputDecoration(
-                      icon: Icon(Icons.euro),
-                    )),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Dieses Feld darf nicht leer sein.";
+                    } else if (double.tryParse(value) == null) {
+                      return "Bitte gib eine Zahl ein.";
+                    } else {
+                      return null;
+                    }
+                  },
+                  controller: _itemPriceController,
+                  decoration: const InputDecoration(icon: Icon(Icons.euro)),
+                ),
               ))
             ],
           )),

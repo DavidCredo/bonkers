@@ -134,6 +134,7 @@ class _AddPayerDialogState extends ConsumerState<AddPayerDialog> {
   final TextEditingController newUserController = TextEditingController();
   late final PayerDialogController dialogController;
   late Color selectedColor;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -156,27 +157,37 @@ class _AddPayerDialogState extends ConsumerState<AddPayerDialog> {
       content: Padding(
         padding: const EdgeInsets.all(8),
         child: Form(
+            key: _formKey,
             child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            TextFormField(
-              controller: newUserController,
-              decoration: const InputDecoration(
-                  labelText: "Name", icon: Icon(Icons.account_box)),
-            ),
-            Flexible(
-              flex: 1,
-              child: MaterialColorPicker(
-                  allowShades: false,
-                  onMainColorChange: (color) {
-                    ref
-                        .read(selectedColorProvider)
-                        .changeColor(color!.withOpacity(1));
-                    selectedColor = color.withOpacity(1);
-                  }),
-            )
-          ],
-        )),
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Bitte gib den Namen des Teilnehmers ein.";
+                    } else if (value.length > 7) {
+                      return "Der Name darf max. 7 Zeichen lang sein.";
+                    } else {
+                      return null;
+                    }
+                  },
+                  controller: newUserController,
+                  decoration: const InputDecoration(
+                      labelText: "Name", icon: Icon(Icons.account_box)),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: MaterialColorPicker(
+                      allowShades: false,
+                      onMainColorChange: (color) {
+                        ref
+                            .read(selectedColorProvider)
+                            .changeColor(color!.withOpacity(1));
+                        selectedColor = color.withOpacity(1);
+                      }),
+                )
+              ],
+            )),
       ),
       actions: [
         TextButton(
@@ -189,10 +200,12 @@ class _AddPayerDialogState extends ConsumerState<AddPayerDialog> {
             )),
         TextButton(
             onPressed: () {
-              final user = ref.read(userCollectionProvider).value;
-              dialogController.addPayer(
-                  user!, newUserController.text, selectedColor);
-              Navigator.of(context).pop();
+              if (_formKey.currentState!.validate()) {
+                final user = ref.read(userCollectionProvider).value;
+                dialogController.addPayer(
+                    user!, newUserController.text, selectedColor);
+                Navigator.of(context).pop();
+              }
             },
             child: const Text("Hinuzufügen"))
       ],

@@ -58,7 +58,7 @@ class _RegisterState extends ConsumerState<Register> {
                   controller: _emailController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a valid email adress';
+                      return 'Bitte gib eine valide Email Adresse an.';
                     }
                     return null;
                   },
@@ -73,7 +73,7 @@ class _RegisterState extends ConsumerState<Register> {
                   controller: _passwordController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a valid password, minimum 6 characters.';
+                      return 'Bitte gib ein Passwort mit mindestens 6 Zeichen ein.';
                     }
                     return null;
                   },

@@ -39,7 +39,7 @@ class _LoginState extends State<Login> {
                       controller: _emailController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your email adress';
+                          return 'Bitte gib deine Email Adresse ein.';
                         }
                         return null;
                       },
@@ -53,7 +53,7 @@ class _LoginState extends State<Login> {
                         controller: _passwordController,
                         validator: (value) {
                           if (value == null || value.length < 6) {
-                            return "Please enter a valid password (min 6 characters)";
+                            return "'Bitte gib ein Passwort mit mindestens 6 Zeichen ein.";
                           }
                           return null;
                         },
