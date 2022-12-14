@@ -22,49 +22,53 @@ class _HomeViewState extends ConsumerState<HomeView> {
     _imagePicker = ImagePicker();
     super.initState();
   }
-// TODO: Back navigation unterbinden
+
+
   @override
   Widget build(BuildContext context) {
     final isDarkModeEnabled =
         ref.watch(themeNotifierProvider).isDarkModeEnabled;
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-              onPressed: ((() {
-                ref.read(themeNotifierProvider).toggleTheme();
-              })),
-              icon:
-                  Icon(isDarkModeEnabled ? Icons.dark_mode : Icons.light_mode)),
-          IconButton(
-              onPressed: () async {
-                await ref.read(firebaseAuthProvider).signOut();
-              },
-              icon: const Icon(Icons.logout)),
-        ],
-        title:
-            Wrap(children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+                onPressed: ((() {
+                  ref.read(themeNotifierProvider).toggleTheme();
+                })),
+                icon: Icon(
+                    isDarkModeEnabled ? Icons.dark_mode : Icons.light_mode)),
+            IconButton(
+                onPressed: () async {
+                  await ref.read(firebaseAuthProvider).signOut();
+                },
+                icon: const Icon(Icons.logout)),
+          ],
+          title: Wrap(
+              children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
+        ),
+        body: Stack(children: <Widget>[
+          const AllBonsOverviewList(),
+          Stack(fit: StackFit.expand, children: [
+            Positioned(
+                left: 40,
+                bottom: 40,
+                child: ElevatedButton(
+                  child: const Text('From Gallery'),
+                  onPressed: () => _getImage(ImageSource.gallery),
+                )),
+            Positioned(
+                right: 40,
+                bottom: 40,
+                child: ElevatedButton(
+                  child: const Text('Take a picture'),
+                  onPressed: () => _getImage(ImageSource.camera),
+                ))
+          ])
+        ]),
       ),
-      body: Stack(children: <Widget>[
-        const AllBonsOverviewList(),
-        Stack(fit: StackFit.expand, children: [
-          Positioned(
-              left: 40,
-              bottom: 40,
-              child: ElevatedButton(
-                child: const Text('From Gallery'),
-                onPressed: () => _getImage(ImageSource.gallery),
-              )),
-          Positioned(
-              right: 40,
-              bottom: 40,
-              child: ElevatedButton(
-                child: const Text('Take a picture'),
-                onPressed: () => _getImage(ImageSource.camera),
-              ))
-        ])
-      ]),
     );
   }
 
