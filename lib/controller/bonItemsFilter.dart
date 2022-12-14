@@ -24,15 +24,17 @@ List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
   int startPos = allLines.indexWhere((element) =>
       (element.text.toLowerCase().contains('eur') ||
           element.text.toLowerCase().contains('kasse')));
-  // TODO: Schlüsselwürter müssen alleine stehen und nicht Teil von anderen Sätzen sein
   int endPos = allLines.indexWhere((element) =>
       (element.text.toLowerCase().contains('zu zahlen') ||
           element.text.toLowerCase().contains('summe') ||
           element.text.toLowerCase().contains('total')));
 
-  // TODO: CRITICAL: Trows exception when startPos or endPos not found
   // TODO: endPos - 1 zieht (nur bei live Fotos) eine Zeile zu viel ab
-  sortedLines = allLines.sublist(startPos + 1, endPos - 1);
+  if (startPos != -1 && endPos != -1) {
+    sortedLines = allLines.sublist(startPos + 1, endPos - 1);
+  } else {
+    return null;
+  }
 
   // now filter out amounts and unit prices
   for (final textLine in sortedLines) {

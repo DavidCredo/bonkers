@@ -147,14 +147,15 @@ class _SplitBonState extends ConsumerState<SplitBon> {
                           ),
                         );
                       }),
-                    if (!_recognitionSuccessful)
-                      const Text(
-                          'Leider konnten auf deinem Bild keine Artikel eines Kassenbons erkannt werden. Versuche insbesondere darauf zu achten, dass der gesamte Bon auf deinem Bild zu sehen ist und Du dein Foto möglichst parallel und gerade zum Kassenbon schießt.')
                   ],
                 )),
-            const Flexible(
-              child: PayerListWidget(),
-            )
+            if (!_recognitionSuccessful)
+              const Text(
+                  'Leider konnten auf deinem Bild keine Artikel eines Kassenbons erkannt werden. Versuche insbesondere darauf zu achten, dass der gesamte Bon auf deinem Bild zu sehen ist und Du dein Foto möglichst parallel und gerade zum Kassenbon schießt.')
+            else
+              const Flexible(
+                child: PayerListWidget(),
+              )
           ],
         ));
   }
