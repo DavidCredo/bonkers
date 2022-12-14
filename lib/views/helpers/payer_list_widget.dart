@@ -59,6 +59,7 @@ class _PayerListWidgetState extends ConsumerState<PayerListWidget> {
                               color: user.payers![index].color,
                               style: BorderStyle.solid)),
                       onPressed: (() {
+                        // TODO: Feedback welcher Payer ausgewählt ist.
                         ref
                             .read(payerNotifierProvider)
                             .updatePayer(user.payers![index]);

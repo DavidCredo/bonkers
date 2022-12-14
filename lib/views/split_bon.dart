@@ -12,6 +12,7 @@ import '../controller/text_detector_painter.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import '../controller/wrapper.dart';
+import '../models/BonItemsToPaint.dart';
 
 class SplitBon extends StatefulWidget {
   const SplitBon({super.key, required this.pickedFile});
@@ -25,9 +26,9 @@ class _SplitBonState extends State<SplitBon> {
   final TextRecognizer _textRecognizer = TextRecognizer();
   bool _canProcess = true;
   bool _isBusy = false;
-  List<TextLine>? _text;
+  List<BonItemsToPaint>? _bonItemsData;
   String? bonTitle;
-  File? _strippedImage;
+  File? _image;
   Size? _imageSize;
   InputImageRotation? _imageRotation;
   double? _width;
@@ -49,6 +50,7 @@ class _SplitBonState extends State<SplitBon> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        // TODO: Save und Discard Feature implementieren
         appBar: AppBar(
           leadingWidth: 60,
           title: Wrap(
@@ -90,8 +92,8 @@ class _SplitBonState extends State<SplitBon> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    if (_strippedImage != null) Image.file(_strippedImage!),
-                    if (_text != null &&
+                    if (_image != null) Image.file(_image!),
+                    if (_bonItemsData != null &&
                         _imageSize != null &&
                         _imageRotation != null)
                       Consumer(builder: (_, WidgetRef ref, __) {
@@ -106,7 +108,7 @@ class _SplitBonState extends State<SplitBon> {
                           child: CanvasTouchDetector(
                             builder: (context) => CustomPaint(
                                 painter: TextRecognizerPainter(
-                                    _text!,
+                                    _bonItemsData!,
                                     _imageSize!,
                                     _imageRotation!,
                                     context,
@@ -121,7 +123,7 @@ class _SplitBonState extends State<SplitBon> {
                           ),
                         );
                       }),
-                    if (_text == null)
+                    if (_bonItemsData == null)
                       const Text(
                           'Leider konnte auf deinem Bild kein Text erkannt werden.') // TODO: schöneres Feedback und Möglichkeit direkt ein neues Bild aufzunehmen / zu wählen.,,
                   ],
@@ -144,7 +146,7 @@ class _SplitBonState extends State<SplitBon> {
     await FlutterImageCompress.compressAndGetFile(path, strippedPath);
 
     setState(() {
-      _strippedImage = File(strippedPath);
+      Platform.isIOS ? _image = File(strippedPath) : File(path);
     });
 
     // image with exif data (needed for orientation information)
@@ -152,11 +154,12 @@ class _SplitBonState extends State<SplitBon> {
     final exifData = await readExifFromBytes(bytes);
 
     // image with stripped exif data
-    final Uint8List strippedBytes = await _strippedImage!.readAsBytes();
+    final Uint8List strippedBytes = await _image!.readAsBytes();
     final decodedImage = await decodeImageFromList(strippedBytes);
     final imageWidth = decodedImage.width.toDouble();
     final imageHeight = decodedImage.height.toDouble();
 
+    //TODO: CRITICAL: Exception, when no exifData is present in picture
     getImageRotation() {
       final orientation = exifData['Image Orientation']!.printable;
 
@@ -193,7 +196,7 @@ class _SplitBonState extends State<SplitBon> {
     _isBusy = true;
     final recognizedText = await _textRecognizer.processImage(inputImage);
     bonTitle = recognizedText.blocks.first.lines.first.text;
-    _text = itemsFilter(recognizedText);
+    _bonItemsData = itemsFilter(recognizedText);
     _isBusy = false;
     if (mounted) {
       setState(() {});
