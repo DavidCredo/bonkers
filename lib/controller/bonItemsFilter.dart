@@ -22,12 +22,12 @@ List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
   allLines
       .sort((a, b) => (a.boundingBox.bottom - b.boundingBox.bottom).floor());
   int startPos = allLines.indexWhere((element) =>
-      (element.text.toLowerCase().contains('eur') ||
+      (element.text.toLowerCase() == "eur" ||
           element.text.toLowerCase().contains('kasse')));
   int endPos = allLines.indexWhere((element) =>
-      (element.text.toLowerCase().contains('zu zahlen') ||
-          element.text.toLowerCase().contains('summe') ||
-          element.text.toLowerCase().contains('total')));
+      (element.text.toLowerCase() == "total" ||
+          element.text.toLowerCase() == "summe" ||
+          element.text.toLowerCase() == "zu zahlen"));
 
   // TODO: endPos - 1 zieht (nur bei live Fotos) eine Zeile zu viel ab
   if (startPos != -1 && endPos != -1) {
