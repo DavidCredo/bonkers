@@ -50,9 +50,9 @@ class _SplitBonState extends State<SplitBon> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // TODO: Save und Discard Feature implementieren
+// TODO: jetzt responsiv?
         appBar: AppBar(
-          leadingWidth: 60,
+          leadingWidth: MediaQuery.of(context).size.width * 0.2,
           title: Wrap(
               children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
           centerTitle: true,
@@ -61,9 +61,11 @@ class _SplitBonState extends State<SplitBon> {
                     onPressed: (() {
                       Navigator.of(context).pop();
                     }),
-                    icon: const Text(
+                    icon: Text(
                       "Zurück",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: MediaQuery.of(context).size.width * 0.04),
                       textAlign: TextAlign.center,
                     ),
                   ))),
