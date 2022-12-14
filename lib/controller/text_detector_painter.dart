@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:bonkers/models/bon_item.dart';
 import 'package:bonkers/models/user.dart';
 import 'package:bonkers/views/helpers/edit_bon_item_widget.dart';
+import 'package:bonkers/views/helpers/edit_local_bonData_dialog.dart';
 import 'package:bonkers/views/split_bon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -89,10 +90,10 @@ class TextRecognizerPainter extends CustomPainter {
           ref.read(shouldRepaintProvider).triggerRepaint();
         }, onLongPressStart: (tapDetail) {
           // TODO: unsauber, onTap wird auch bei longpress aufgerufen
-          // showDialog(
-          //   context: context,
-          //   builder: (context) => EditBonItemDialog(bon: bonArticles, index: 2),
-          // );
+          showDialog(
+            context: context,
+            builder: (context) => EditLocalBonItemDialog(bonItem: item),
+          );
         });
 
         canvas.drawParagraph(
