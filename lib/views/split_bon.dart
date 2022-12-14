@@ -27,7 +27,7 @@ class _SplitBonState extends State<SplitBon> {
   bool _isBusy = false;
   List<BonItemsToPaint>? _bonItemsData;
   String? bonTitle;
-  File? _strippedImage;
+  File? _image;
   Size? _imageSize;
   InputImageRotation? _imageRotation;
   double? _width;
@@ -67,7 +67,7 @@ class _SplitBonState extends State<SplitBon> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    if (_strippedImage != null) Image.file(_strippedImage!),
+                    if (_image != null) Image.file(_image!),
                     if (_bonItemsData != null &&
                         _imageSize != null &&
                         _imageRotation != null)
@@ -121,7 +121,7 @@ class _SplitBonState extends State<SplitBon> {
     await FlutterImageCompress.compressAndGetFile(path, strippedPath);
 
     setState(() {
-      _strippedImage = File(strippedPath);
+      Platform.isIOS ? _image = File(strippedPath) : File(path);
     });
 
     // image with exif data (needed for orientation information)
@@ -129,7 +129,7 @@ class _SplitBonState extends State<SplitBon> {
     final exifData = await readExifFromBytes(bytes);
 
     // image with stripped exif data
-    final Uint8List strippedBytes = await _strippedImage!.readAsBytes();
+    final Uint8List strippedBytes = await _image!.readAsBytes();
     final decodedImage = await decodeImageFromList(strippedBytes);
     final imageWidth = decodedImage.width.toDouble();
     final imageHeight = decodedImage.height.toDouble();
