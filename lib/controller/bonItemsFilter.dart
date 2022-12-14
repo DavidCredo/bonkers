@@ -29,8 +29,12 @@ List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
           element.text.toLowerCase().contains('summe') ||
           element.text.toLowerCase().contains('total')));
 
-  //TODO: CRITICAL: Trows exception when startPos or endPos not found
-  sortedLines = allLines.sublist(startPos + 1, endPos - 1);
+  // TODO: endPos - 1 zieht (nur bei live Fotos) eine Zeile zu viel ab
+  if (startPos != -1 && endPos != -1) {
+    sortedLines = allLines.sublist(startPos + 1, endPos - 1);
+  } else {
+    return null;
+  }
 
   // now filter out amounts and unit prices
   for (final textLine in sortedLines) {

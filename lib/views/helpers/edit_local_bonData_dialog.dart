@@ -75,7 +75,7 @@ class _EditLocalBonItemDialogState
               ref.read(shouldRepaintProvider).triggerRepaint();
               Navigator.of(context).pop();
             }),
-            child: Text("Speichern"))
+            child: const Text("Speichern"))
       ],
     );
   }

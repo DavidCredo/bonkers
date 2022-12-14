@@ -10,24 +10,28 @@ import 'package:touchable/touchable.dart';
 import '../controller/bonItemsFilter.dart';
 import '../controller/text_detector_painter.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-
 import '../controller/wrapper.dart';
 import '../models/BonItemsToPaint.dart';
+import '../models/bon.dart';
+import '../models/bon_item.dart';
+import '../services/bon_service.dart';
 
-class SplitBon extends StatefulWidget {
+class SplitBon extends ConsumerStatefulWidget {
   const SplitBon({super.key, required this.pickedFile});
   final XFile pickedFile;
 
   @override
-  State<SplitBon> createState() => _SplitBonState();
+  ConsumerState<SplitBon> createState() => _SplitBonState();
 }
 
-class _SplitBonState extends State<SplitBon> {
+class _SplitBonState extends ConsumerState<SplitBon> {
   final TextRecognizer _textRecognizer = TextRecognizer();
+  TextRecognizerPainter? _painterInstance;
   bool _canProcess = true;
   bool _isBusy = false;
+  bool _recognitionSuccessful = true;
+  String? _bonTitle;
   List<BonItemsToPaint>? _bonItemsData;
-  String? bonTitle;
   File? _strippedImage;
   Size? _imageSize;
   InputImageRotation? _imageRotation;
@@ -50,7 +54,6 @@ class _SplitBonState extends State<SplitBon> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-// TODO: jetzt responsiv?
         appBar: AppBar(
           leadingWidth: MediaQuery.of(context).size.width * 0.2,
           title: Wrap(
@@ -71,8 +74,22 @@ class _SplitBonState extends State<SplitBon> {
                   ))),
           actions: [
             TextButton(
-                onPressed: (() async {
-                  // TODO: Hier Datenbankaufruf zum Speichern des Bons. Wichtig => Await nutzen.
+                onPressed: (() {
+                  // create list of bon items (for database)
+                  if (_painterInstance != null) {
+                    final List<BonItem> bonItems = [];
+                    for (final item in _painterInstance!.bonRects) {
+                      // at this point, the value for key "price" must be a double, previous checks will handle
+                      bonItems.add(BonItem(
+                          price: double.parse(item.rectList["price"]!.content),
+                          title: item.rectList["title"]!.content,
+                          payer: item.payer));
+                    }
+                    final Bon newBon =
+                        Bon.createBonFromScan(_bonTitle!, bonItems);
+                    ref.read(bonServiceProvider).addBon(newBon);
+                  }
+
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: ((context) => const Wrapper())));
                 }),
@@ -85,6 +102,7 @@ class _SplitBonState extends State<SplitBon> {
         body: Column(
           children: [
             SizedBox(
+                // display the image in maximal display size while retaining the proportions
                 height: _width != null && _height != null
                     ? (MediaQuery.of(context).size.width / _width! * _height!)
                     : MediaQuery.of(context).size.height,
@@ -94,7 +112,12 @@ class _SplitBonState extends State<SplitBon> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    if (_strippedImage != null) Image.file(_strippedImage!),
+                    if (_strippedImage != null)
+                      Image.file(_strippedImage!)
+                    else
+                      const Center(
+                        child: CircularProgressIndicator(),
+                      ),
                     if (_bonItemsData != null &&
                         _imageSize != null &&
                         _imageRotation != null)
@@ -109,12 +132,13 @@ class _SplitBonState extends State<SplitBon> {
                           maintainState: true,
                           child: CanvasTouchDetector(
                             builder: (context) => CustomPaint(
-                                painter: TextRecognizerPainter(
-                                    _bonItemsData!,
-                                    _imageSize!,
-                                    _imageRotation!,
-                                    context,
-                                    ref)),
+                                painter: _painterInstance =
+                                    TextRecognizerPainter(
+                                        _bonItemsData!,
+                                        _imageSize!,
+                                        _imageRotation!,
+                                        context,
+                                        ref)),
                             gesturesToOverride: const [
                               GestureType.onTapDown,
                               GestureType.onTapUp,
@@ -125,14 +149,15 @@ class _SplitBonState extends State<SplitBon> {
                           ),
                         );
                       }),
-                    if (_bonItemsData == null)
-                      const Text(
-                          'Leider konnte auf deinem Bild kein Text erkannt werden.') // TODO: schöneres Feedback und Möglichkeit direkt ein neues Bild aufzunehmen / zu wählen.,,
                   ],
                 )),
-            const Flexible(
-              child: PayerListWidget(),
-            )
+            if (!_recognitionSuccessful)
+              const Text(
+                  'Leider konnten auf deinem Bild keine Artikel eines Kassenbons erkannt werden. Versuche insbesondere darauf zu achten, dass der gesamte Bon auf deinem Bild zu sehen ist und Du dein Foto möglichst parallel und gerade zum Kassenbon schießt.')
+            else
+              const Flexible(
+                child: PayerListWidget(),
+              )
           ],
         ));
   }
@@ -161,9 +186,8 @@ class _SplitBonState extends State<SplitBon> {
     final imageWidth = decodedImage.width.toDouble();
     final imageHeight = decodedImage.height.toDouble();
 
-    //TODO: CRITICAL: Exception, when no exifData is present in picture
     getImageRotation() {
-      final orientation = exifData['Image Orientation']!.printable;
+      final orientation = exifData['Image Orientation']?.printable ?? "no info";
 
       if (orientation == "Horizontal (normal)" && imageHeight < imageWidth) {
         return InputImageRotation.rotation0deg;
@@ -178,12 +202,17 @@ class _SplitBonState extends State<SplitBon> {
             ? InputImageRotation.rotation90deg
             : InputImageRotation.rotation0deg;
       } else if (imageHeight < imageWidth) {
-        return InputImageRotation.rotation0deg;
+        return Platform.isIOS
+            ? InputImageRotation.rotation0deg
+            : InputImageRotation.rotation90deg;
       } else if (imageHeight > imageWidth) {
-        return InputImageRotation.rotation90deg;
+        return Platform.isIOS
+            ? InputImageRotation.rotation90deg
+            : InputImageRotation.rotation0deg;
       } else {
+        // if in doubt or square, the function still needs this information. In most cases its 90 degrees
         return InputImageRotation.rotation90deg;
-      } // if in doubt or square, the function still needs this information. In most cases its 90 degrees
+      }
     }
 
     final inputImage = InputImage.fromFilePath(strippedPath);
@@ -201,8 +230,9 @@ class _SplitBonState extends State<SplitBon> {
     if (_isBusy) return;
     _isBusy = true;
     final recognizedText = await _textRecognizer.processImage(inputImage);
-    bonTitle = recognizedText.blocks.first.lines.first.text;
+    _bonTitle = recognizedText.blocks.first.lines.first.text;
     _bonItemsData = itemsFilter(recognizedText);
+    if (_bonItemsData == null) _recognitionSuccessful = false;
     _isBusy = false;
     if (mounted) {
       setState(() {});
@@ -210,7 +240,6 @@ class _SplitBonState extends State<SplitBon> {
   }
 }
 
-//TODO: in eigene Datei auslagern
 class VisibilityNotifier extends ChangeNotifier {
   bool showOverlay = true;
 

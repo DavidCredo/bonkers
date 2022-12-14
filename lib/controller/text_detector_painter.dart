@@ -1,8 +1,6 @@
 import 'dart:ui';
 import 'dart:ui' as ui;
-import 'package:bonkers/models/bon_item.dart';
 import 'package:bonkers/models/user.dart';
-import 'package:bonkers/views/helpers/edit_bon_item_widget.dart';
 import 'package:bonkers/views/helpers/edit_local_bonData_dialog.dart';
 import 'package:bonkers/views/split_bon.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +19,6 @@ class TextRecognizerPainter extends CustomPainter {
   final InputImageRotation rotation;
   final BuildContext context; // context from CanvasTouchDetector
   final WidgetRef ref;
-  Map<double, BonItem> entries = {};
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -111,13 +108,6 @@ class TextRecognizerPainter extends CustomPainter {
               ..style = PaintingStyle.fill);
       });
     }
-
-    // create list of bon items (for database)
-    // TODO:erst beim Klick auf Speichern ausführen -> jedes bonRects-Objekt durchgehen und bei den "rectList"s die values "title" und "price" nehmen, dessen "content"s bilden den Kassenbon
-    // TODO: in Splitbon auslagern, sofern sich der painter und Splitbon tatsächlich dieselbe Instanz von bonRects teilen.
-
-    // final Bon newBon = Bon.createBonFromScan(bonTitle, bonArticles);
-    // bonServiceProvider.addBon(newBon);
   }
 
   @override
@@ -126,7 +116,7 @@ class TextRecognizerPainter extends CustomPainter {
   }
 }
 
-class shouldRepaintNotifier extends ChangeNotifier {
+class ShouldRepaintNotifier extends ChangeNotifier {
   Color color = const Color(0x00000000);
 
   void triggerRepaint() {
@@ -135,6 +125,6 @@ class shouldRepaintNotifier extends ChangeNotifier {
 }
 
 final shouldRepaintProvider =
-    ChangeNotifierProvider<shouldRepaintNotifier>((ref) {
-  return shouldRepaintNotifier();
+    ChangeNotifierProvider<ShouldRepaintNotifier>((ref) {
+  return ShouldRepaintNotifier();
 });
