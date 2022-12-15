@@ -72,7 +72,7 @@ class _BonItemTileState extends ConsumerState<BonItemTile> {
       ),
       trailing: Text(
         bonItem.payer ?? "Niemand",
-        style: TextStyle(color: Colors.black),
+        style: TextStyle(color: getPayerColorIfMatching(bonItem.payer!)),
       ),
       onTap: () {
         final newBonItem = bonItem.copyWith(payer: selectedPayer.name);
@@ -88,14 +88,19 @@ class _BonItemTileState extends ConsumerState<BonItemTile> {
     );
   }
 
-  // Color getPayerColorIfMatching(String payerName) {
-  //   final userCollection = ref.watch(userCollectionProvider);
-  //   final payerList = userCollection.value!.payers;
-  //   for (Payer payer in payerList!) {
-  //     if (payer.name == payerName) {
-  //       return payer.color;
-  //     }
-  //   }
-  //   return Colors.black;
-  // }
+  Color getPayerColorIfMatching(String payerName) {
+    final userCollectionListener = ref.watch(userCollectionProvider);
+    final userCollection = userCollectionListener.value;
+
+    if (userCollection != null) {
+      for (Payer payer in userCollection.payers!) {
+        if (payer.name == payerName) {
+          return payer.color;
+        }
+      }
+      return Colors.black;
+    } else {
+      return Colors.black;
+    }
+  }
 }
