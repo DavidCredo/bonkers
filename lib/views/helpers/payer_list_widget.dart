@@ -31,14 +31,14 @@ class _PayerListWidgetState extends ConsumerState<PayerListWidget> {
                   children: [
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(15.0),
                         child: Text(
-                          "Aktueller Teilnehmer: ${ref.watch(payerNotifierProvider).selectedPayer.name}",
+                          "Ausgabe ${ref.watch(payerNotifierProvider).selectedPayer.name} zuordnen",
                           textAlign: TextAlign.left,
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize:
-                                  MediaQuery.of(context).size.width * 0.06,
+                                  MediaQuery.of(context).size.width * 0.05,
                               color: ref
                                   .watch(payerNotifierProvider)
                                   .selectedPayer
