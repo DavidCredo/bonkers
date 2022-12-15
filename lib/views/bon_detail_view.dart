@@ -25,7 +25,6 @@ class _BonDetailViewState extends ConsumerState<BonDetailView> {
   Widget build(BuildContext context) {
     final Bon bon = widget.bon;
 
-//TODO: Check if BonItem List scrolls and PayerList doesnt!
     return Scaffold(
       appBar: AppBar(title: Text(bon.title)),
       body: Column(

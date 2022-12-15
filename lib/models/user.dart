@@ -50,10 +50,14 @@ class AuthenticatedUser {
 }
 
 class PayerNotifier extends ChangeNotifier {
-  Payer selectedPayer = Payer(color: Color(16043240), name: "Niemand");
+  Payer selectedPayer = Payer(color: const Color(0x00000000), name: "Niemand");
 
   void updatePayer(Payer newPayer) {
-    selectedPayer = newPayer;
+    if (selectedPayer != newPayer) {
+      selectedPayer = newPayer;
+    } else {
+      selectedPayer = Payer(color: const Color(0x00000000), name: "Niemand");
+    }
     notifyListeners();
   }
 }
