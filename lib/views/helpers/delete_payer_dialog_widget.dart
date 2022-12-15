@@ -36,7 +36,7 @@ class DeletePayerDialog extends ConsumerWidget {
               Navigator.of(context).pop();
               ref
                   .read(payerNotifierProvider)
-                  .updatePayer(Payer(color: Colors.amber, name: "Niemand"));
+                  .updatePayer(Payer(color: Colors.black, name: "Niemand"));
             },
             child: const Text(
               "Löschen",

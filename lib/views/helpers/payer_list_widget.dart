@@ -93,6 +93,9 @@ class _PayerListWidgetState extends ConsumerState<PayerListWidget> {
                                         .updatePayer(user.payers![index]);
                                   }),
                                   onLongPress: () {
+                                    ref
+                                        .read(payerNotifierProvider)
+                                        .updatePayer(user.payers![index]);
                                     showGeneralDialog(
                                       context: context,
                                       pageBuilder: (context, animation,
