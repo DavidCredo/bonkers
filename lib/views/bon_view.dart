@@ -1,7 +1,7 @@
 import 'package:bonkers/controller/database.dart';
 import 'package:bonkers/models/bon.dart';
 import 'package:bonkers/models/user.dart';
-import 'package:bonkers/services/bon_service.dart';
+import 'package:bonkers/controller/bon_service.dart';
 import 'package:bonkers/views/helpers/edit_bon_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,12 +22,17 @@ class SingleBonListView extends ConsumerWidget {
             itemBuilder: ((context, index) {
               if (index == bonData.articles.length) {
                 return Center(
-                  child: Text(
-                    "Summe: " + Bon.getSumInEuros(bonData),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 24),
-                  ),
-                );
+                    child: ref.read(payerNotifierProvider).selectedPayer.name ==
+                            "Niemand"
+                        ? Text(
+                            "Summe: ${Bon.getSumInEuros(bonData)}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 24),
+                          )
+                        : Text(
+                            "${ref.read(payerNotifierProvider).selectedPayer.name} zahlt: ${Bon.getSumInEuros(bonData)}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 24)));
               }
               return BonItemTile(
                 bonItem: bonData.articles[index],

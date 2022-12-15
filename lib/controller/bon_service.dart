@@ -60,7 +60,6 @@ final bonStreamProvider =
 
   if (user != null) {
     return ref.read(bonRepositoryProvider).getBon(uid: user.uid, bonUid: bonId);
-    
   } else {
     return const Stream.empty();
   }

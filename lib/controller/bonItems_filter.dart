@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
-import '../models/BonItemsToPaint.dart';
+import '../models/bon_items_to_paint.dart';
 
 List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
   if (recognizedText == null) return null;
