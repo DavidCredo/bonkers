@@ -83,33 +83,45 @@ class _RegisterState extends ConsumerState<Register> {
                       prefixIcon: Icon(Icons.password)),
                   obscureText: true,
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (_registerFormKey.currentState!.validate()) {
-                        dynamic result = await _auth.registerEmailPassword(
-                            _emailController.text, _passwordController.text);
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(48, 16, 48, 0),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if (_registerFormKey.currentState!.validate()) {
+                              dynamic result =
+                                  await _auth.registerEmailPassword(
+                                      _emailController.text,
+                                      _passwordController.text);
 
-                        if (result.uid == null) {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(content: Text(result.code));
-                              });
-                        } else {
-                          AuthenticatedUser user = AuthenticatedUser(
-                            email: _emailController.text,
-                            firstName: _nameController.text,
-                            uid: result.uid,
-                          );
+                              if (result.uid == null) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                          content: Text(result.code));
+                                    });
+                              } else {
+                                AuthenticatedUser user = AuthenticatedUser(
+                                  email: _emailController.text,
+                                  firstName: _nameController.text,
+                                  uid: result.uid,
+                                );
 
-                          ref.read(databaseProvider).addUser(user);
-                        }
-                      }
-                    },
-                    child: const Text('Register'),
-                  ),
+                                ref.read(databaseProvider).addUser(user);
+                              }
+                            }
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(12.0),
+                            child: Text('Register'),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 TextButton(
                     onPressed: () {

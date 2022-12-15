@@ -23,7 +23,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final isDarkModeEnabled =
@@ -49,24 +48,47 @@ class _HomeViewState extends ConsumerState<HomeView> {
           title: Wrap(
               children: const [Icon(Icons.receipt_long), Text(' Bonkers')]),
         ),
-        body: Stack(children: <Widget>[
-          const AllBonsOverviewList(),
-          Stack(fit: StackFit.expand, children: [
-            Positioned(
-                left: 40,
-                bottom: 40,
-                child: ElevatedButton(
-                  child: const Text('From Gallery'),
+        body: Column(children: <Widget>[
+          const Expanded(child: AllBonsOverviewList()),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "Füge einen neuen Bon hinzu:",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: MediaQuery.of(context).size.width * 0.04),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(children: [
+              Expanded(
+                  child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.image),
+                  label: const Padding(
+                    padding: EdgeInsets.fromLTRB(8.0, 20.0, 8, 20),
+                    child: Text('Aus der Galerie'),
+                  ),
                   onPressed: () => _getImage(ImageSource.gallery),
-                )),
-            Positioned(
-                right: 40,
-                bottom: 40,
-                child: ElevatedButton(
-                  child: const Text('Take a picture'),
+                ),
+              )),
+              Expanded(
+                  child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.camera),
+                  label: const Padding(
+                    padding: EdgeInsets.fromLTRB(8.0, 20, 8, 20),
+                    child: Text('Mach ein Foto'),
+                  ),
                   onPressed: () => _getImage(ImageSource.camera),
-                ))
-          ])
+                ),
+              ))
+            ]),
+          )
         ]),
       ),
     );

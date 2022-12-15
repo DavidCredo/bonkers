@@ -62,28 +62,38 @@ class _LoginState extends State<Login> {
                             hintText: "Password",
                             prefixIcon: Icon(Icons.password)),
                         obscureText: true),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          // Validate returns true if the form is valid, or false otherwise.
-                          if (_loginFormKey.currentState!.validate()) {
-                            dynamic result = await _auth.signInEmailPassword(
-                                _emailController.text,
-                                _passwordController.text);
-                            if (result.uid == null) {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      content: Text(result.code),
-                                    );
-                                  });
-                            }
-                          }
-                        },
-                        child: const Text('Login'),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(48, 16, 48, 0),
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                // Validate returns true if the form is valid, or false otherwise.
+                                if (_loginFormKey.currentState!.validate()) {
+                                  dynamic result =
+                                      await _auth.signInEmailPassword(
+                                          _emailController.text,
+                                          _passwordController.text);
+                                  if (result.uid == null) {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            content: Text(result.code),
+                                          );
+                                        });
+                                  }
+                                }
+                              },
+                              child: const Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text('Login'),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     TextButton(
                         onPressed: () {
