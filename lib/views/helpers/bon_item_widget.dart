@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/bon.dart';
-import '../../services/bon_service.dart';
+import '../../controller/bon_service.dart';
 import '../bon_detail_view.dart';
 
 class AllBonsListTile extends ConsumerWidget {

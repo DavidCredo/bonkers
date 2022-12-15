@@ -1,7 +1,7 @@
 import 'package:bonkers/controller/auth.dart';
 import 'package:bonkers/models/bon.dart';
 import 'package:bonkers/models/bon_item.dart';
-import 'package:bonkers/models/firebaseuser.dart';
+import 'package:bonkers/models/firebase_user.dart';
 import 'package:bonkers/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -1,5 +1,5 @@
 import 'package:bonkers/controller/text_detector_painter.dart';
-import 'package:bonkers/models/BonItemsToPaint.dart';
+import 'package:bonkers/models/bon_items_to_paint.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

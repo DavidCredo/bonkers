@@ -1,4 +1,4 @@
-import 'package:bonkers/services/bon_service.dart';
+import 'package:bonkers/controller/bon_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'bon_item_widget.dart';

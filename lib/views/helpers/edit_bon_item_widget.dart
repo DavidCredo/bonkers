@@ -1,6 +1,6 @@
 import 'package:bonkers/models/bon.dart';
 import 'package:bonkers/models/bon_item.dart';
-import 'package:bonkers/services/bon_service.dart';
+import 'package:bonkers/controller/bon_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -6,7 +6,7 @@ import 'package:bonkers/views/split_bon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import '../models/BonItemsToPaint.dart';
+import '../models/bon_items_to_paint.dart';
 import 'coordinates_translator.dart';
 import 'package:touchable/touchable.dart';
 

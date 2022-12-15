@@ -7,14 +7,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:touchable/touchable.dart';
-import '../controller/bonItemsFilter.dart';
+import '../controller/bonItems_filter.dart';
 import '../controller/text_detector_painter.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import '../controller/wrapper.dart';
-import '../models/BonItemsToPaint.dart';
+import '../models/bon_items_to_paint.dart';
 import '../models/bon.dart';
 import '../models/bon_item.dart';
-import '../services/bon_service.dart';
+import '../controller/bon_service.dart';
 
 class SplitBon extends ConsumerStatefulWidget {
   const SplitBon({super.key, required this.pickedFile});
