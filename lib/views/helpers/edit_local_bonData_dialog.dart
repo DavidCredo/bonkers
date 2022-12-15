@@ -60,7 +60,6 @@ class _EditLocalBonItemDialogState
                   child: Padding(
                 padding: const EdgeInsets.all(8),
                 child: TextFormField(
-                  keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Dieses Feld darf nicht leer sein.";

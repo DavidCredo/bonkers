@@ -81,7 +81,6 @@ class _EditBonItemDialogState extends ConsumerState<EditBonItemDialog> {
                       return null;
                     }
                   },
-                  keyboardType: TextInputType.number,
                   controller: _itemPriceController,
                   decoration: const InputDecoration(icon: Icon(Icons.euro)),
                 )),
