@@ -61,7 +61,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 30),
             child: Row(children: [
               Expanded(
                   child: Padding(
@@ -70,7 +70,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   icon: const Icon(Icons.image),
                   label: const Padding(
                     padding: EdgeInsets.fromLTRB(8.0, 20.0, 8, 20),
-                    child: Text('Aus der Galerie'),
+                    child: Text('Galerie'),
                   ),
                   onPressed: () => _getImage(ImageSource.gallery),
                 ),
@@ -82,7 +82,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   icon: const Icon(Icons.camera),
                   label: const Padding(
                     padding: EdgeInsets.fromLTRB(8.0, 20, 8, 20),
-                    child: Text('Mach ein Foto'),
+                    child: Text('Foto'),
                   ),
                   onPressed: () => _getImage(ImageSource.camera),
                 ),
