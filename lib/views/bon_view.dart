@@ -72,7 +72,7 @@ class _BonItemTileState extends ConsumerState<BonItemTile> {
       ),
       trailing: Text(
         bonItem.payer ?? "Niemand",
-        style: TextStyle(color: getPayerColorIfMatching(bonItem.payer!)),
+        style: TextStyle(color: getPayerColorIfMatching(bonItem.payer)),
       ),
       onTap: () {
         final newBonItem = bonItem.copyWith(payer: selectedPayer.name);
@@ -88,7 +88,7 @@ class _BonItemTileState extends ConsumerState<BonItemTile> {
     );
   }
 
-  Color getPayerColorIfMatching(String payerName) {
+  Color getPayerColorIfMatching(String? payerName) {
     final userCollectionListener = ref.watch(userCollectionProvider);
     final userCollection = userCollectionListener.value;
 
