@@ -29,7 +29,6 @@ List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
           element.text.toLowerCase() == "summe" ||
           element.text.toLowerCase() == "zu zahlen"));
 
-  // TODO: endPos - 1 zieht (nur bei live Fotos) eine Zeile zu viel ab
   if (startPos != -1 && endPos != -1) {
     sortedLines = allLines.sublist(startPos + 1, endPos - 1);
   } else {
@@ -45,7 +44,7 @@ List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
           .replaceAll(RegExp(','), '.')
           .replaceAll(RegExp('O'), '0')
           .replaceAll(RegExp('[A-Za-z]'), '')
-          .replaceAll(RegExp(' 1'), '');
+          .replaceAll(RegExp(' '), '');
     }
 
     // resolve common errors from TextRecognizer
@@ -82,7 +81,10 @@ List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
     }
 
     if (isTitle(textLine.text)) {
-      if (!textLine.text.toLowerCase().contains("stk")) {
+      if (!textLine.text.toLowerCase().contains(" x") &&
+          !textLine.text.toLowerCase().contains("stk") &&
+          !textLine.text.toLowerCase().contains("pfand") &&
+          !textLine.text.toLowerCase().contains("rabatt")) {
         treatedLines.add(TextLine(
             text: treatItem(textLine.text),
             elements: textLine.elements,
@@ -95,7 +97,9 @@ List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
       continue;
     } else if (isPrice(textLine.text)) {
       // filter for unit counts
-      if (!textLine.text.toLowerCase().contains("x")) {
+      if (!textLine.text.toLowerCase().contains(" x") &&
+          !textLine.text.toLowerCase().contains("*") &&
+          !textLine.text.toLowerCase().contains("-")) {
         treatedLines.add(TextLine(
             text: treatPrice(textLine.text),
             elements: textLine.elements,
