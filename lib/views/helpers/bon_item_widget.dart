@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../models/bon.dart';
 import '../../controller/bon_service.dart';
+import '../../models/bon.dart';
 import '../bon_detail_view.dart';
 
 class AllBonsListTile extends ConsumerWidget {
@@ -21,7 +21,7 @@ class AllBonsListTile extends ConsumerWidget {
       child: ListTile(
         title: Text(bon.title),
         subtitle: Text("Hinzugefügt am: $formattedTime"),
-        trailing: Text("Summe: $sum"),
+        trailing: Text(sum),
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return BonDetailView(bon: bon);

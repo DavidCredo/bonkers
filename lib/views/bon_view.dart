@@ -1,11 +1,11 @@
 import 'package:bonkers/controller/database.dart';
 import 'package:bonkers/models/bon.dart';
 import 'package:bonkers/models/user.dart';
-import 'package:bonkers/controller/bon_service.dart';
 import 'package:bonkers/views/helpers/edit_bon_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../controller/bon_service.dart';
 import '../models/bon_item.dart';
 import '../models/payer.dart';
 
@@ -22,17 +22,12 @@ class SingleBonListView extends ConsumerWidget {
             itemBuilder: ((context, index) {
               if (index == bonData.articles.length) {
                 return Center(
-                    child: ref.read(payerNotifierProvider).selectedPayer.name ==
-                            "Niemand"
-                        ? Text(
-                            "Summe: ${Bon.getSumInEuros(bonData)}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 24),
-                          )
-                        : Text(
-                            "${ref.read(payerNotifierProvider).selectedPayer.name} zahlt: ${Bon.getSumInEuros(bonData)}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 24)));
+                  child: Text(
+                    Bon.getPayersSum(bonData, ref),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 24),
+                  ),
+                );
               }
               return BonItemTile(
                 bonItem: bonData.articles[index],
@@ -77,7 +72,7 @@ class _BonItemTileState extends ConsumerState<BonItemTile> {
       ),
       trailing: Text(
         bonItem.payer ?? "Niemand",
-        style: TextStyle(color: getPayerColorIfMatching(bonItem.payer)),
+        style: TextStyle(color: getPayerColorIfMatching(bonItem.payer!)),
       ),
       onTap: () {
         final newBonItem = bonItem.copyWith(payer: selectedPayer.name);
@@ -93,7 +88,7 @@ class _BonItemTileState extends ConsumerState<BonItemTile> {
     );
   }
 
-  Color getPayerColorIfMatching(String? payerName) {
+  Color getPayerColorIfMatching(String payerName) {
     final userCollectionListener = ref.watch(userCollectionProvider);
     final userCollection = userCollectionListener.value;
 

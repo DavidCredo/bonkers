@@ -1,7 +1,9 @@
 import 'package:bonkers/controller/database.dart';
 import 'package:bonkers/models/bon_item.dart';
+import 'package:bonkers/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 class Bon {
@@ -66,7 +68,33 @@ class Bon {
     final sum = bon.articles
         .map((article) => article.price)
         .reduce((value, element) => value + element);
+    final formattedSum =
+        NumberFormat.currency(locale: 'eu', symbol: '€').format(sum);
 
-    return NumberFormat.currency(locale: 'eu', symbol: '€').format(sum);
+    return "Summe: $formattedSum";
+  }
+
+  static String getPayersSum(Bon bon, WidgetRef ref) {
+    final selectedPayer = ref.watch(payerNotifierProvider).selectedPayer;
+    var isPayerinList = false;
+
+    for (final article in bon.articles) {
+      if (article.payer == selectedPayer.name) {
+        isPayerinList = true;
+        break;
+      }
+    }
+
+    if (isPayerinList && selectedPayer.name != "Niemand") {
+      final sum = bon.articles
+          .where((item) => item.payer == selectedPayer.name)
+          .map((article) => article.price)
+          .reduce((value, element) => value + element);
+      final formattedSum =
+          NumberFormat.currency(locale: 'eu', symbol: '€').format(sum);
+      return "${selectedPayer.name} zahlt: $formattedSum";
+    } else {
+      return getSumInEuros(bon);
+    }
   }
 }
