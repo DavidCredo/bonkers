@@ -1,7 +1,5 @@
 import 'dart:ui';
-
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-
 import '../models/bon_items_to_paint.dart';
 
 List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
@@ -81,8 +79,7 @@ List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
     }
 
     if (isTitle(textLine.text)) {
-      if (!textLine.text.toLowerCase().contains(" x") &&
-          !textLine.text.toLowerCase().contains("stk") &&
+      if (!textLine.text.toLowerCase().contains("stk") &&
           !textLine.text.toLowerCase().contains("pfand") &&
           !textLine.text.toLowerCase().contains("rabatt")) {
         treatedLines.add(TextLine(
@@ -97,7 +94,7 @@ List<BonItemsToPaint>? itemsFilter(RecognizedText? recognizedText) {
       continue;
     } else if (isPrice(textLine.text)) {
       // filter for unit counts
-      if (!textLine.text.toLowerCase().contains(" x") &&
+      if (!textLine.text.toLowerCase().contains("x") &&
           !textLine.text.toLowerCase().contains("*") &&
           !textLine.text.toLowerCase().contains("-")) {
         treatedLines.add(TextLine(
